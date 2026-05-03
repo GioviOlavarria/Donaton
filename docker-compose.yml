@@ -1,0 +1,166 @@
+services:
+
+  db-centros:
+    image: mysql:8.0
+    container_name: donaton-db-centros
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE:      ${CENTROS_DB_NAME}
+      MYSQL_USER:          ${CENTROS_DB_USER}
+      MYSQL_PASSWORD:      ${CENTROS_DB_PASSWORD}
+    ports:
+      - "${CENTROS_DB_PORT}:3306"
+    volumes:
+      - centros-data:/var/lib/mysql
+      - ./db-init:/docker-entrypoint-initdb.d
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost",
+             "-u", "root", "-p${MYSQL_ROOT_PASSWORD}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - donaton-network
+
+  db-donantes:
+    image: mysql:8.0
+    container_name: donaton-db-donantes
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE:      ${DONANTES_DB_NAME}
+      MYSQL_USER:          ${DONANTES_DB_USER}
+      MYSQL_PASSWORD:      ${DONANTES_DB_PASSWORD}
+    ports:
+      - "${DONANTES_DB_PORT}:3306"
+    volumes:
+      - donantes-data:/var/lib/mysql
+      - ./db-init:/docker-entrypoint-initdb.d
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost",
+             "-u", "root", "-p${MYSQL_ROOT_PASSWORD}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - donaton-network
+
+  db-beneficiarios:
+    image: mysql:8.0
+    container_name: donaton-db-beneficiarios
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE:      ${BENEFICIARIOS_DB_NAME}
+      MYSQL_USER:          ${BENEFICIARIOS_DB_USER}
+      MYSQL_PASSWORD:      ${BENEFICIARIOS_DB_PASSWORD}
+    ports:
+      - "${BENEFICIARIOS_DB_PORT}:3306"
+    volumes:
+      - beneficiarios-data:/var/lib/mysql
+      - ./db-init:/docker-entrypoint-initdb.d
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost",
+             "-u", "root", "-p${MYSQL_ROOT_PASSWORD}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - donaton-network
+
+  db-donaciones:
+    image: mysql:8.0
+    container_name: donaton-db-donaciones
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE:      ${DONACIONES_DB_NAME}
+      MYSQL_USER:          ${DONACIONES_DB_USER}
+      MYSQL_PASSWORD:      ${DONACIONES_DB_PASSWORD}
+    ports:
+      - "${DONACIONES_DB_PORT}:3306"
+    volumes:
+      - donaciones-data:/var/lib/mysql
+      - ./db-init/04-donaciones.sql:/docker-entrypoint-initdb.d/init.sql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost",
+             "-u", "root", "-p${MYSQL_ROOT_PASSWORD}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - donaton-network
+
+  ms-centros-acopio:
+    build:
+      context: ./ms-centros-acopio
+      dockerfile: Dockerfile
+    container_name: donaton-ms-centros
+    ports:
+      - "${CENTROS_APP_PORT}:8083"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://db-centros:3306/${CENTROS_DB_NAME}?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=America/Santiago
+      SPRING_DATASOURCE_USERNAME: ${CENTROS_DB_USER}
+      SPRING_DATASOURCE_PASSWORD: ${CENTROS_DB_PASSWORD}
+    depends_on:
+      db-centros:
+        condition: service_healthy
+    networks:
+      - donaton-network
+
+  ms-donantes:
+    build:
+      context: ./ms-donantes
+      dockerfile: Dockerfile
+    container_name: donaton-ms-donantes
+    ports:
+      - "${DONANTES_APP_PORT}:8081"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://db-donantes:3306/${DONANTES_DB_NAME}?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=America/Santiago
+      SPRING_DATASOURCE_USERNAME: ${DONANTES_DB_USER}
+      SPRING_DATASOURCE_PASSWORD: ${DONANTES_DB_PASSWORD}
+    depends_on:
+      db-donantes:
+        condition: service_healthy
+    networks:
+      - donaton-network
+
+  ms-beneficiarios:
+    build:
+      context: ./ms-beneficiarios
+      dockerfile: Dockerfile
+    container_name: donaton-ms-beneficiarios
+    ports:
+      - "${BENEFICIARIOS_APP_PORT}:8082"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://db-beneficiarios:3306/${BENEFICIARIOS_DB_NAME}?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=America/Santiago
+      SPRING_DATASOURCE_USERNAME: ${BENEFICIARIOS_DB_USER}
+      SPRING_DATASOURCE_PASSWORD: ${BENEFICIARIOS_DB_PASSWORD}
+    depends_on:
+      db-beneficiarios:
+        condition: service_healthy
+    networks:
+      - donaton-network
+
+  ms-donaciones:
+    build:
+      context: ./ms-donaciones
+      dockerfile: Dockerfile
+    container_name: donaton-ms-donaciones
+    ports:
+      - "${DONACIONES_APP_PORT}:8084"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://db-donaciones:3306/${DONACIONES_DB_NAME}?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=America/Santiago
+      SPRING_DATASOURCE_USERNAME: ${DONACIONES_DB_USER}
+      SPRING_DATASOURCE_PASSWORD: ${DONACIONES_DB_PASSWORD}
+    depends_on:
+      db-donaciones:
+        condition: service_healthy
+    networks:
+      - donaton-network
+
+volumes:
+  centros-data:
+  donantes-data:
+  beneficiarios-data:
+
+networks:
+  donaton-network:
+    driver: bridge

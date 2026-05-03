@@ -2,7 +2,9 @@
 <project version="4">
   <component name="VcsDirectoryMappings">
     <mapping directory="$PROJECT_DIR$" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/ms-beneficiarios" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/ms-centros-acopio" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/ms-donaciones" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/ms-donantes" vcs="Git" />
   </component>
 </project>
