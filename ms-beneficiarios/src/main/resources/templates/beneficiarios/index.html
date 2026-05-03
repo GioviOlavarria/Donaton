@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Donaton · Beneficiarios</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com"/>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Plus+Jakarta+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+    <style>
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+        :root {
+            --bg:      #0d0d14;
+            --surface: #13131e;
+            --card:    #16162299;
+            --border:  #252535;
+            --accent:  #7c6cfa;
+            --accent2: #b8aeff;
+            --glow:    rgba(124,108,250,0.15);
+            --text:    #e8e8f0;
+            --muted:   #5a5a7a;
+            --tag-bg:  #1e1e30;
+        }
+
+        body {
+            background: var(--bg);
+            color: var(--text);
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            min-height: 100vh;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            inset: 0;
+            background:
+                    radial-gradient(ellipse 80% 50% at 50% -10%, rgba(124,108,250,0.12) 0%, transparent 70%),
+                    radial-gradient(ellipse 40% 40% at 80% 80%, rgba(184,174,255,0.05) 0%, transparent 60%);
+            pointer-events: none;
+        }
+
+        .wrapper { position: relative; max-width: 1100px; margin: 0 auto; padding: 0 2rem; }
+
+
+        header {
+            padding: 3rem 0 2.5rem;
+            text-align: center;
+            margin-bottom: 3rem;
+            position: relative;
+        }
+
+        .eyebrow {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.6rem;
+            font-family: 'Space Mono', monospace;
+            font-size: 0.7rem;
+            color: var(--accent2);
+            letter-spacing: 0.1em;
+            margin-bottom: 1.2rem;
+            background: var(--tag-bg);
+            border: 1px solid var(--border);
+            border-radius: 100px;
+            padding: 0.4rem 1rem;
+        }
+
+        .eyebrow::before, .eyebrow::after {
+            content: '//';
+            opacity: 0.4;
+        }
+
+        h1 {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-size: clamp(2.2rem, 5vw, 3.8rem);
+            font-weight: 300;
+            letter-spacing: -0.03em;
+            line-height: 1.1;
+        }
+
+        h1 strong {
+            font-weight: 600;
+            background: linear-gradient(135deg, var(--accent), var(--accent2));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        /* ── Stats ── */
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1px;
+            background: var(--border);
+            border-radius: 16px;
+            overflow: hidden;
+            margin-bottom: 3rem;
+            border: 1px solid var(--border);
+        }
+
+        .stat {
+            background: var(--surface);
+            padding: 1.8rem;
+            text-align: center;
+            animation: fadeUp 0.5s ease both;
+        }
+
+        .stat-value {
+            font-family: 'Space Mono', monospace;
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--accent);
+            display: block;
+            margin-bottom: 0.3rem;
+        }
+
+        .stat-label {
+            font-size: 0.72rem;
+            text-transform: uppercase;
+            letter-spacing: 0.15em;
+            color: var(--muted);
+        }
+
+        /* ── Tabla ── */
+        .table-wrap {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            overflow: hidden;
+            margin-bottom: 4rem;
+        }
+
+        table { width: 100%; border-collapse: collapse; }
+
+        thead { background: var(--tag-bg); }
+
+        thead th {
+            padding: 1rem 1.5rem;
+            text-align: left;
+            font-family: 'Space Mono', monospace;
+            font-size: 0.65rem;
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            color: var(--muted);
+            font-weight: 400;
+            border-bottom: 1px solid var(--border);
+        }
+
+        tbody tr {
+            border-bottom: 1px solid var(--border);
+            transition: background 0.15s;
+            animation: fadeUp 0.4s ease both;
+        }
+
+        tbody tr:last-child { border-bottom: none; }
+        tbody tr:hover { background: var(--card); }
+
+        tbody td {
+            padding: 1.1rem 1.5rem;
+            font-size: 0.875rem;
+            vertical-align: middle;
+        }
+
+        .td-name { font-weight: 600; }
+        .td-rut  { font-family: 'Space Mono', monospace; font-size: 0.8rem; color: var(--muted); }
+
+        .need-tag {
+            display: inline-block;
+            background: var(--tag-bg);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            padding: 0.2rem 0.6rem;
+            font-size: 0.75rem;
+            color: var(--accent2);
+            max-width: 250px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.3rem;
+            font-size: 0.65rem;
+            font-weight: 600;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            padding: 0.3rem 0.7rem;
+            border-radius: 6px;
+        }
+
+        .badge-active   { background: rgba(124,108,250,0.15); color: var(--accent2); border: 1px solid rgba(124,108,250,0.3); }
+        .badge-inactive { background: rgba(90,90,122,0.15);  color: var(--muted);   border: 1px solid var(--border); }
+
+        .centro-id {
+            font-family: 'Space Mono', monospace;
+            font-size: 0.75rem;
+            color: var(--muted);
+            background: var(--tag-bg);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            padding: 0.2rem 0.5rem;
+        }
+
+        @keyframes fadeUp {
+            from { opacity: 0; transform: translateY(10px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+
+        tbody tr:nth-child(1)  { animation-delay: 0.04s; }
+        tbody tr:nth-child(2)  { animation-delay: 0.08s; }
+        tbody tr:nth-child(3)  { animation-delay: 0.12s; }
+        tbody tr:nth-child(4)  { animation-delay: 0.16s; }
+        tbody tr:nth-child(5)  { animation-delay: 0.20s; }
+        tbody tr:nth-child(6)  { animation-delay: 0.24s; }
+
+        .empty { text-align: center; padding: 5rem 2rem; color: var(--muted); }
+        .empty h2 { font-size: 1.5rem; color: var(--text); margin-bottom: 0.5rem; }
+    </style>
+</head>
+<body>
+<div class="wrapper">
+
+    <header>
+        <div class="eyebrow">donaton sistema</div>
+        <h1>Registro de <strong>Beneficiarios</strong></h1>
+    </header>
+
+    <div class="stats" th:if="${!beneficiarios.isEmpty()}">
+        <div class="stat">
+            <span class="stat-value" th:text="${beneficiarios.size()}">0</span>
+            <span class="stat-label">Total</span>
+        </div>
+        <div class="stat">
+            <span class="stat-value" th:text="${beneficiarios.stream().filter(b -> b.activo).count()}">0</span>
+            <span class="stat-label">Activos</span>
+        </div>
+        <div class="stat">
+            <span class="stat-value" th:text="${beneficiarios.stream().filter(b -> !b.activo).count()}">0</span>
+            <span class="stat-label">Inactivos</span>
+        </div>
+    </div>
+
+    <div class="table-wrap" th:if="${!beneficiarios.isEmpty()}">
+        <table>
+            <thead>
+            <tr>
+                <th>#</th>
+                <th>Nombre</th>
+                <th>RUT</th>
+                <th>Necesidad</th>
+                <th>Centro ID</th>
+                <th>Estado</th>
+                <th>Registro</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="b, iter : ${beneficiarios}">
+                <td class="td-rut" th:text="${iter.count}">1</td>
+                <td>
+                    <div class="td-name" th:text="${b.nombre} + ' ' + ${b.apellido}">–</div>
+                    <div style="font-size:0.75rem;color:var(--muted)" th:text="${b.telefono ?: '–'}">–</div>
+                </td>
+                <td class="td-rut" th:text="${b.rut}">–</td>
+                <td>
+            <span class="need-tag"
+                  th:text="${b.necesidad != null and !b.necesidad.isEmpty()} ? ${b.necesidad} : 'No especificada'">–</span>
+                </td>
+                <td>
+                    <span class="centro-id" th:text="'Centro #' + ${b.centroAcopioId}">–</span>
+                </td>
+                <td>
+            <span class="badge"
+                  th:classappend="${b.activo} ? 'badge-active' : 'badge-inactive'"
+                  th:text="${b.activo} ? 'Activo' : 'Inactivo'">–</span>
+                </td>
+                <td class="td-rut" th:text="${#temporals.format(b.creadoEn, 'dd/MM/yyyy')}">–</td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="empty" th:if="${beneficiarios.isEmpty()}">
+        <h2>Sin beneficiarios registrados</h2>
+        <p>No hay beneficiarios en el sistema todavía.</p>
+    </div>
+
+</div>
+</body>
+</html>

@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Donaton · Centros de Acopio</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com"/>
+    <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;1,300&display=swap" rel="stylesheet"/>
+    <style>
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+        :root {
+            --bg:        #0a0f0d;
+            --surface:   #111a15;
+            --card:      #162019;
+            --border:    #1f3328;
+            --accent:    #2dff6e;
+            --accent2:   #00c48c;
+            --text:      #e8f5ec;
+            --muted:     #5a7a64;
+            --danger:    #ff4d6d;
+        }
+
+        body {
+            background: var(--bg);
+            color: var(--text);
+            font-family: 'DM Sans', sans-serif;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+
+        body::before {
+            content: '';
+            position: fixed;
+            inset: 0;
+            background-image:
+                    radial-gradient(circle at 20% 20%, rgba(45,255,110,0.06) 0%, transparent 50%),
+                    radial-gradient(circle at 80% 80%, rgba(0,196,140,0.05) 0%, transparent 50%),
+                    repeating-linear-gradient(0deg, transparent, transparent 40px, rgba(31,51,40,0.3) 40px, rgba(31,51,40,0.3) 41px),
+                    repeating-linear-gradient(90deg, transparent, transparent 40px, rgba(31,51,40,0.3) 40px, rgba(31,51,40,0.3) 41px);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .wrapper { position: relative; z-index: 1; max-width: 1200px; margin: 0 auto; padding: 0 2rem; }
+
+
+        header {
+            padding: 2.5rem 0 2rem;
+            border-bottom: 1px solid var(--border);
+            margin-bottom: 3rem;
+            display: flex;
+            align-items: flex-end;
+            justify-content: space-between;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .logo-group { display: flex; flex-direction: column; gap: 0.3rem; }
+
+        .logo-tag {
+            font-family: 'Syne', sans-serif;
+            font-size: 0.7rem;
+            font-weight: 600;
+            letter-spacing: 0.25em;
+            text-transform: uppercase;
+            color: var(--accent);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .logo-tag::before {
+            content: '';
+            display: inline-block;
+            width: 20px;
+            height: 2px;
+            background: var(--accent);
+        }
+
+        h1 {
+            font-family: 'Syne', sans-serif;
+            font-size: clamp(2rem, 5vw, 3.5rem);
+            font-weight: 800;
+            line-height: 1;
+            letter-spacing: -0.03em;
+        }
+
+        h1 span { color: var(--accent); }
+
+        .header-meta {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            gap: 0.5rem;
+        }
+
+        .total-badge {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 100px;
+            padding: 0.5rem 1.2rem;
+            font-family: 'Syne', sans-serif;
+            font-size: 0.85rem;
+            color: var(--muted);
+        }
+
+        .total-badge strong { color: var(--accent); font-size: 1.4rem; margin-right: 0.3rem; }
+
+        /* ── Stats row ── */
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+            gap: 1rem;
+            margin-bottom: 3rem;
+        }
+
+        .stat {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 1.4rem 1.6rem;
+            position: relative;
+            overflow: hidden;
+            animation: fadeUp 0.5s ease both;
+        }
+
+        .stat::after {
+            content: '';
+            position: absolute;
+            bottom: 0; left: 0; right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, var(--accent), var(--accent2));
+            transform: scaleX(0);
+            transform-origin: left;
+            transition: transform 0.3s ease;
+        }
+
+        .stat:hover::after { transform: scaleX(1); }
+
+        .stat-label {
+            font-size: 0.72rem;
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            color: var(--muted);
+            font-weight: 600;
+            margin-bottom: 0.6rem;
+        }
+
+        .stat-value {
+            font-family: 'Syne', sans-serif;
+            font-size: 2.2rem;
+            font-weight: 800;
+            color: var(--accent);
+            line-height: 1;
+        }
+
+        /* ── Grid de cards ── */
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 4rem;
+        }
+
+        .card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 1.8rem;
+            position: relative;
+            overflow: hidden;
+            transition: transform 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease;
+            animation: fadeUp 0.5s ease both;
+        }
+
+        .card:hover {
+            transform: translateY(-4px);
+            border-color: var(--accent2);
+            box-shadow: 0 20px 60px rgba(0,0,0,0.4), 0 0 0 1px rgba(45,255,110,0.1);
+        }
+
+        .card-id {
+            position: absolute;
+            top: 1.2rem; right: 1.5rem;
+            font-family: 'Syne', sans-serif;
+            font-size: 0.7rem;
+            color: var(--muted);
+            letter-spacing: 0.1em;
+        }
+
+        .card-status {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            font-size: 0.7rem;
+            font-weight: 600;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            padding: 0.3rem 0.8rem;
+            border-radius: 100px;
+            margin-bottom: 1rem;
+        }
+
+        .status-active {
+            background: rgba(45,255,110,0.1);
+            color: var(--accent);
+            border: 1px solid rgba(45,255,110,0.2);
+        }
+
+        .status-inactive {
+            background: rgba(255,77,109,0.1);
+            color: var(--danger);
+            border: 1px solid rgba(255,77,109,0.2);
+        }
+
+        .status-dot {
+            width: 6px; height: 6px;
+            border-radius: 50%;
+            background: currentColor;
+            animation: pulse 2s infinite;
+        }
+
+        .status-inactive .status-dot { animation: none; }
+
+        .card-name {
+            font-family: 'Syne', sans-serif;
+            font-size: 1.25rem;
+            font-weight: 700;
+            line-height: 1.2;
+            margin-bottom: 1.2rem;
+            padding-right: 2rem;
+        }
+
+        .card-fields { display: flex; flex-direction: column; gap: 0.6rem; }
+
+        .field {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.7rem;
+            font-size: 0.875rem;
+        }
+
+        .field-icon {
+            width: 28px; height: 28px;
+            border-radius: 8px;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 0.85rem;
+            flex-shrink: 0;
+            margin-top: 1px;
+        }
+
+        .field-content { flex: 1; }
+        .field-label { font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--muted); margin-bottom: 0.1rem; }
+        .field-value { color: var(--text); line-height: 1.4; word-break: break-word; }
+        .field-value.empty { color: var(--muted); font-style: italic; font-size: 0.8rem; }
+
+        .card-divider {
+            height: 1px;
+            background: var(--border);
+            margin: 1.2rem 0;
+        }
+
+        .card-footer {
+            font-size: 0.72rem;
+            color: var(--muted);
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+
+
+        .empty {
+            text-align: center;
+            padding: 5rem 2rem;
+            color: var(--muted);
+        }
+
+        .empty-icon { font-size: 3rem; margin-bottom: 1rem; opacity: 0.4; }
+        .empty h2 { font-family: 'Syne', sans-serif; font-size: 1.5rem; color: var(--text); margin-bottom: 0.5rem; }
+
+
+        @keyframes fadeUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.4; }
+        }
+
+        .card:nth-child(1) { animation-delay: 0.05s; }
+        .card:nth-child(2) { animation-delay: 0.10s; }
+        .card:nth-child(3) { animation-delay: 0.15s; }
+        .card:nth-child(4) { animation-delay: 0.20s; }
+        .card:nth-child(5) { animation-delay: 0.25s; }
+        .card:nth-child(6) { animation-delay: 0.30s; }
+        .card:nth-child(7) { animation-delay: 0.35s; }
+        .card:nth-child(8) { animation-delay: 0.40s; }
+    </style>
+</head>
+<body>
+<div class="wrapper">
+
+    <header>
+        <div class="logo-group">
+            <span class="logo-tag">Donaton · Sistema de Donaciones</span>
+            <h1>Centros de <span>Acopio</span></h1>
+        </div>
+        <div class="header-meta">
+            <div class="total-badge">
+                <strong th:text="${centros.size()}">0</strong> centros registrados
+            </div>
+        </div>
+    </header>
+
+    <div class="stats" th:if="${!centros.isEmpty()}">
+        <div class="stat">
+            <div class="stat-label">Total registrados</div>
+            <div class="stat-value" th:text="${centros.size()}">0</div>
+        </div>
+        <div class="stat">
+            <div class="stat-label">Activos</div>
+            <div class="stat-value"
+                 th:text="${centros.stream().filter(c -> c.activo).count()}">0</div>
+        </div>
+        <div class="stat">
+            <div class="stat-label">Inactivos</div>
+            <div class="stat-value"
+                 th:text="${centros.stream().filter(c -> !c.activo).count()}">0</div>
+        </div>
+    </div>
+
+    <!-- Grid centros -->
+    <div class="grid" th:if="${!centros.isEmpty()}">
+        <div class="card" th:each="centro : ${centros}">
+
+            <span class="card-id" th:text="'#' + ${centro.id}">–</span>
+
+            <span class="card-status"
+                  th:classappend="${centro.activo} ? 'status-active' : 'status-inactive'">
+        <span class="status-dot"></span>
+        <span th:text="${centro.activo} ? 'Activo' : 'Inactivo'">–</span>
+      </span>
+
+            <div class="card-name" th:text="${centro.nombre}">Nombre</div>
+
+            <div class="card-fields">
+                <div class="field">
+                    <div class="field-icon"></div>
+                    <div class="field-content">
+                        <div class="field-label">Dirección</div>
+                        <div class="field-value" th:text="${centro.direccion}">–</div>
+                    </div>
+                </div>
+
+                <div class="field">
+                    <div class="field-icon"></div>
+                    <div class="field-content">
+                        <div class="field-label">Comuna</div>
+                        <div class="field-value"
+                             th:text="${centro.comuna != null and !centro.comuna.isEmpty()} ? ${centro.comuna} : 'No especificada'"
+                             th:classappend="${centro.comuna == null or centro.comuna.isEmpty()} ? 'empty'">–</div>
+                    </div>
+                </div>
+
+                <div class="field">
+                    <div class="field-icon"></div>
+                    <div class="field-content">
+                        <div class="field-label">Teléfono</div>
+                        <div class="field-value"
+                             th:text="${centro.telefono != null and !centro.telefono.isEmpty()} ? ${centro.telefono} : 'No registrado'"
+                             th:classappend="${centro.telefono == null or centro.telefono.isEmpty()} ? 'empty'">–</div>
+                    </div>
+                </div>
+
+                <div class="field">
+                    <div class="field-icon">✉️</div>
+                    <div class="field-content">
+                        <div class="field-label">Email</div>
+                        <div class="field-value"
+                             th:text="${centro.email != null and !centro.email.isEmpty()} ? ${centro.email} : 'No registrado'"
+                             th:classappend="${centro.email == null or centro.email.isEmpty()} ? 'empty'">–</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card-divider"></div>
+            <div class="card-footer">
+                🕓 Registrado el
+                <span th:text="${#temporals.format(centro.creadoEn, 'dd MMM yyyy')}">–</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Empty state -->
+    <div class="empty" th:if="${centros.isEmpty()}">
+        <div class="empty-icon">🏢</div>
+        <h2>Sin centros registrados</h2>
+        <p>Aún no hay centros de acopio en el sistema.</p>
+    </div>
+
+</div>
+</body>
+</html>

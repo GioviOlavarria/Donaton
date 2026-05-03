@@ -14,11 +14,11 @@ services:
       - centros-data:/var/lib/mysql
       - ./db-init:/docker-entrypoint-initdb.d
     healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "-h", "localhost",
-             "-u", "root", "-p${MYSQL_ROOT_PASSWORD}"]
+      test: ["CMD-SHELL", "mysqladmin ping -h localhost -u root -p${MYSQL_ROOT_PASSWORD} --silent"]
       interval: 10s
       timeout: 5s
       retries: 5
+      start_period: 30s
     networks:
       - donaton-network
 
@@ -36,11 +36,11 @@ services:
       - donantes-data:/var/lib/mysql
       - ./db-init:/docker-entrypoint-initdb.d
     healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "-h", "localhost",
-             "-u", "root", "-p${MYSQL_ROOT_PASSWORD}"]
+      test: ["CMD-SHELL", "mysqladmin ping -h localhost -u root -p${MYSQL_ROOT_PASSWORD} --silent"]
       interval: 10s
       timeout: 5s
       retries: 5
+      start_period: 30s
     networks:
       - donaton-network
 
@@ -58,11 +58,11 @@ services:
       - beneficiarios-data:/var/lib/mysql
       - ./db-init:/docker-entrypoint-initdb.d
     healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "-h", "localhost",
-             "-u", "root", "-p${MYSQL_ROOT_PASSWORD}"]
+      test: ["CMD-SHELL", "mysqladmin ping -h localhost -u root -p${MYSQL_ROOT_PASSWORD} --silent"]
       interval: 10s
       timeout: 5s
       retries: 5
+      start_period: 30s
     networks:
       - donaton-network
 
@@ -78,13 +78,13 @@ services:
       - "${DONACIONES_DB_PORT}:3306"
     volumes:
       - donaciones-data:/var/lib/mysql
-      - ./db-init/04-donaciones.sql:/docker-entrypoint-initdb.d/init.sql
+      - ./db-init:/docker-entrypoint-initdb.d
     healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "-h", "localhost",
-             "-u", "root", "-p${MYSQL_ROOT_PASSWORD}"]
+      test: ["CMD-SHELL", "mysqladmin ping -h localhost -u root -p${MYSQL_ROOT_PASSWORD} --silent"]
       interval: 10s
       timeout: 5s
       retries: 5
+      start_period: 30s
     networks:
       - donaton-network
 
@@ -160,6 +160,7 @@ volumes:
   centros-data:
   donantes-data:
   beneficiarios-data:
+  donaciones-data:
 
 networks:
   donaton-network:

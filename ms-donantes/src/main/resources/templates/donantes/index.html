@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Donaton · Donantes</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com"/>
+    <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,300;0,700;0,900;1,300&family=Epilogue:wght@300;400;500&display=swap" rel="stylesheet"/>
+    <style>
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+        :root {
+            --bg:      #faf7f2;
+            --surface: #f2ede4;
+            --card:    #ffffff;
+            --border:  #e2d9cc;
+            --accent:  #c8522a;
+            --accent2: #e8855e;
+            --text:    #1a1410;
+            --muted:   #9a8878;
+            --soft:    #f7f0e8;
+        }
+
+        body {
+            background: var(--bg);
+            color: var(--text);
+            font-family: 'Epilogue', sans-serif;
+            min-height: 100vh;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            inset: 0;
+            background-image:
+                    radial-gradient(ellipse at 0% 0%, rgba(200,82,42,0.08) 0%, transparent 60%),
+                    radial-gradient(ellipse at 100% 100%, rgba(232,133,94,0.06) 0%, transparent 60%);
+            pointer-events: none;
+        }
+
+        .wrapper { position: relative; max-width: 1200px; margin: 0 auto; padding: 0 2rem; }
+
+
+        header {
+            padding: 3rem 0 2.5rem;
+            display: grid;
+            grid-template-columns: 1fr auto;
+            align-items: end;
+            gap: 2rem;
+            border-bottom: 2px solid var(--text);
+            margin-bottom: 3rem;
+        }
+
+        .eyebrow {
+            font-size: 0.72rem;
+            letter-spacing: 0.3em;
+            text-transform: uppercase;
+            color: var(--accent);
+            font-weight: 500;
+            margin-bottom: 0.8rem;
+        }
+
+        h1 {
+            font-family: 'Fraunces', serif;
+            font-size: clamp(2.5rem, 6vw, 4.5rem);
+            font-weight: 900;
+            line-height: 0.95;
+            letter-spacing: -0.02em;
+        }
+
+        h1 em {
+            font-style: italic;
+            font-weight: 300;
+            color: var(--accent);
+        }
+
+        .counter {
+            font-family: 'Fraunces', serif;
+            font-size: 5rem;
+            font-weight: 900;
+            line-height: 1;
+            color: var(--surface);
+            -webkit-text-stroke: 2px var(--border);
+            text-align: right;
+        }
+
+        .counter span {
+            display: block;
+            font-family: 'Epilogue', sans-serif;
+            font-size: 0.7rem;
+            font-weight: 500;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            color: var(--muted);
+            -webkit-text-stroke: 0;
+            margin-top: 0.3rem;
+        }
+
+
+        .stats {
+            display: flex;
+            gap: 2px;
+            margin-bottom: 3rem;
+            background: var(--border);
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        .stat {
+            flex: 1;
+            background: var(--card);
+            padding: 1.5rem 2rem;
+            animation: fadeIn 0.4s ease both;
+        }
+
+        .stat-label {
+            font-size: 0.7rem;
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            color: var(--muted);
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-value {
+            font-family: 'Fraunces', serif;
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--accent);
+            line-height: 1;
+        }
+
+
+        .list { display: flex; flex-direction: column; gap: 2px; margin-bottom: 4rem; }
+
+        .item {
+            background: var(--card);
+            border-left: 3px solid transparent;
+            padding: 1.5rem 2rem;
+            display: grid;
+            grid-template-columns: auto 1fr auto;
+            align-items: center;
+            gap: 1.5rem;
+            transition: border-color 0.2s, background 0.2s;
+            animation: slideIn 0.4s ease both;
+            cursor: default;
+        }
+
+        .item:hover {
+            border-left-color: var(--accent);
+            background: var(--soft);
+        }
+
+        .item-num {
+            font-family: 'Fraunces', serif;
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--border);
+            min-width: 3rem;
+            text-align: right;
+        }
+
+        .item-main { min-width: 0; }
+
+        .item-name {
+            font-family: 'Fraunces', serif;
+            font-size: 1.3rem;
+            font-weight: 700;
+            margin-bottom: 0.4rem;
+        }
+
+        .item-meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            font-size: 0.82rem;
+            color: var(--muted);
+        }
+
+        .item-meta-piece { display: flex; align-items: center; gap: 0.3rem; }
+
+        .item-right { text-align: right; }
+
+        .badge {
+            display: inline-block;
+            font-size: 0.65rem;
+            font-weight: 600;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            padding: 0.25rem 0.7rem;
+            border-radius: 4px;
+            margin-bottom: 0.5rem;
+        }
+
+        .badge-active   { background: #e8f5ec; color: #2d7a4a; }
+        .badge-inactive { background: #fceef0; color: #c0392b; }
+
+        .item-date { font-size: 0.72rem; color: var(--muted); }
+
+        .item:nth-child(odd) { background: var(--soft); }
+        .item:nth-child(odd):hover { background: #f0e8dc; }
+
+        @keyframes fadeIn  { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes slideIn { from { opacity: 0; transform: translateX(-12px); } to { opacity: 1; transform: translateX(0); } }
+
+        .item:nth-child(1) { animation-delay: 0.05s; }
+        .item:nth-child(2) { animation-delay: 0.10s; }
+        .item:nth-child(3) { animation-delay: 0.15s; }
+        .item:nth-child(4) { animation-delay: 0.20s; }
+        .item:nth-child(5) { animation-delay: 0.25s; }
+
+        .empty { text-align: center; padding: 5rem 2rem; color: var(--muted); }
+        .empty h2 { font-family: 'Fraunces', serif; font-size: 2rem; color: var(--text); margin-bottom: 0.5rem; }
+    </style>
+</head>
+<body>
+<div class="wrapper">
+
+    <header>
+        <div>
+            <div class="eyebrow">Donaton · Registro</div>
+            <h1>Nuestros<br/><em>Donantes</em></h1>
+        </div>
+        <div class="counter" th:text="${donantes.size()}">0<span>registrados</span></div>
+    </header>
+
+    <div class="stats" th:if="${!donantes.isEmpty()}">
+        <div class="stat">
+            <div class="stat-label">Total donantes</div>
+            <div class="stat-value" th:text="${donantes.size()}">0</div>
+        </div>
+        <div class="stat">
+            <div class="stat-label">Activos</div>
+            <div class="stat-value" th:text="${donantes.stream().filter(d -> d.activo).count()}">0</div>
+        </div>
+        <div class="stat">
+            <div class="stat-label">Inactivos</div>
+            <div class="stat-value" th:text="${donantes.stream().filter(d -> !d.activo).count()}">0</div>
+        </div>
+    </div>
+
+    <div class="list" th:if="${!donantes.isEmpty()}">
+        <div class="item" th:each="donante, iter : ${donantes}">
+            <div class="item-num" th:text="${iter.count}">1</div>
+            <div class="item-main">
+                <div class="item-name"
+                     th:text="${donante.nombre} + ' ' + ${donante.apellido}">Nombre Apellido</div>
+                <div class="item-meta">
+                    <span class="item-meta-piece">✉️ <span th:text="${donante.email}">–</span></span>
+                    <span class="item-meta-piece" th:if="${donante.telefono != null and !donante.telefono.isEmpty()}">
+             <span th:text="${donante.telefono}">–</span>
+          </span>
+                    <span class="item-meta-piece" th:if="${donante.direccion != null and !donante.direccion.isEmpty()}">
+             <span th:text="${donante.direccion}">–</span>
+          </span>
+                </div>
+            </div>
+            <div class="item-right">
+                <div class="badge"
+                     th:classappend="${donante.activo} ? 'badge-active' : 'badge-inactive'"
+                     th:text="${donante.activo} ? 'Activo' : 'Inactivo'">–</div>
+                <div class="item-date"
+                     th:text="'Desde ' + ${#temporals.format(donante.creadoEn, 'dd MMM yyyy')}">–</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="empty" th:if="${donantes.isEmpty()}">
+        <h2>Sin donantes aún</h2>
+        <p>No hay donantes registrados en el sistema.</p>
+    </div>
+
+</div>
+</body>
+</html>
