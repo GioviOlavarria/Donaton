@@ -232,11 +232,11 @@
             <span class="stat-label">Total</span>
         </div>
         <div class="stat">
-            <span class="stat-value" th:text="${beneficiarios.stream().filter(b -> b.activo).count()}">0</span>
+            <span class="stat-value" th:text="${activos}">0</span>
             <span class="stat-label">Activos</span>
         </div>
         <div class="stat">
-            <span class="stat-value" th:text="${beneficiarios.stream().filter(b -> !b.activo).count()}">0</span>
+            <span class="stat-value" th:text="${inactivos}">0</span>
             <span class="stat-label">Inactivos</span>
         </div>
     </div>

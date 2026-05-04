@@ -8,11 +8,12 @@ services:
       MYSQL_DATABASE:      ${CENTROS_DB_NAME}
       MYSQL_USER:          ${CENTROS_DB_USER}
       MYSQL_PASSWORD:      ${CENTROS_DB_PASSWORD}
+    command: --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
     ports:
       - "${CENTROS_DB_PORT}:3306"
     volumes:
       - centros-data:/var/lib/mysql
-      - ./db-init:/docker-entrypoint-initdb.d
+      - ./db-init/centros:/docker-entrypoint-initdb.d
     healthcheck:
       test: ["CMD-SHELL", "mysqladmin ping -h localhost -u root -p${MYSQL_ROOT_PASSWORD} --silent"]
       interval: 10s
@@ -30,11 +31,12 @@ services:
       MYSQL_DATABASE:      ${DONANTES_DB_NAME}
       MYSQL_USER:          ${DONANTES_DB_USER}
       MYSQL_PASSWORD:      ${DONANTES_DB_PASSWORD}
+    command: --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
     ports:
       - "${DONANTES_DB_PORT}:3306"
     volumes:
       - donantes-data:/var/lib/mysql
-      - ./db-init:/docker-entrypoint-initdb.d
+      - ./db-init/donantes:/docker-entrypoint-initdb.d
     healthcheck:
       test: ["CMD-SHELL", "mysqladmin ping -h localhost -u root -p${MYSQL_ROOT_PASSWORD} --silent"]
       interval: 10s
@@ -52,11 +54,12 @@ services:
       MYSQL_DATABASE:      ${BENEFICIARIOS_DB_NAME}
       MYSQL_USER:          ${BENEFICIARIOS_DB_USER}
       MYSQL_PASSWORD:      ${BENEFICIARIOS_DB_PASSWORD}
+    command: --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
     ports:
       - "${BENEFICIARIOS_DB_PORT}:3306"
     volumes:
       - beneficiarios-data:/var/lib/mysql
-      - ./db-init:/docker-entrypoint-initdb.d
+      - ./db-init/beneficiarios:/docker-entrypoint-initdb.d
     healthcheck:
       test: ["CMD-SHELL", "mysqladmin ping -h localhost -u root -p${MYSQL_ROOT_PASSWORD} --silent"]
       interval: 10s
@@ -74,11 +77,12 @@ services:
       MYSQL_DATABASE:      ${DONACIONES_DB_NAME}
       MYSQL_USER:          ${DONACIONES_DB_USER}
       MYSQL_PASSWORD:      ${DONACIONES_DB_PASSWORD}
+    command: --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
     ports:
       - "${DONACIONES_DB_PORT}:3306"
     volumes:
       - donaciones-data:/var/lib/mysql
-      - ./db-init:/docker-entrypoint-initdb.d
+      - ./db-init/donaciones:/docker-entrypoint-initdb.d
     healthcheck:
       test: ["CMD-SHELL", "mysqladmin ping -h localhost -u root -p${MYSQL_ROOT_PASSWORD} --silent"]
       interval: 10s
