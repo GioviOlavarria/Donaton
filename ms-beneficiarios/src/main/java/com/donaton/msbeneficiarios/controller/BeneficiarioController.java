@@ -74,4 +74,10 @@ public class BeneficiarioController {
         service.eliminar(id);
         return ResponseEntity.noContent().build();
     }
+
+    @DeleteMapping("/centro/{centroId}")
+    public ResponseEntity<Void> eliminarPorCentro(@PathVariable Long centroId) {
+        service.eliminarPorCentro(centroId);
+        return ResponseEntity.noContent().build();
+    }
 }

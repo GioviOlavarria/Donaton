@@ -15,4 +15,8 @@ public interface DonanteRepository extends JpaRepository<Donante, Long> {
     Optional<Donante> findByEmail(String email);
 
     boolean existsByEmail(String email);
+
+    List<Donante> findByCentroAcopioId(Long centroAcopioId);
+
+    void deleteByCentroAcopioId(Long centroAcopioId);
 }

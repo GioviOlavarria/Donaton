@@ -3,6 +3,7 @@ package com.donaton.msdonantes.model;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -43,6 +44,10 @@ public class Donante {
 
     @Size(max = 255)
     private String direccion;
+
+    @NotNull(message = "El centro de acopio es obligatorio")
+    @Column(name = "centro_acopio_id", nullable = false)
+    private Long centroAcopioId;
 
     @Column(nullable = false)
     private Boolean activo = true;

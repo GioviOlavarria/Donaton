@@ -19,4 +19,6 @@ public interface BeneficiarioRepository extends JpaRepository<Beneficiario, Long
     Optional<Beneficiario> findByRut(String rut);
 
     boolean existsByRut(String rut);
+
+    void deleteByCentroAcopioId(Long centroAcopioId);
 }

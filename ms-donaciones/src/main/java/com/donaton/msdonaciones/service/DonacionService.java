@@ -77,4 +77,9 @@ public class DonacionService {
         Donacion existente = buscarPorId(id);
         repository.delete(existente);
     }
+
+    @Transactional
+    public void eliminarPorCentro(Long centroAcopioId) {
+        repository.deleteByCentroAcopioId(centroAcopioId);
+    }
 }

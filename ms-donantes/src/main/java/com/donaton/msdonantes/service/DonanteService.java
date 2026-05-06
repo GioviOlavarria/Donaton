@@ -23,6 +23,10 @@ public class DonanteService {
         return repository.findByActivoTrue();
     }
 
+    public List<Donante> listarPorCentro(Long centroAcopioId) {
+        return repository.findByCentroAcopioId(centroAcopioId);
+    }
+
     public Donante buscarPorId(Long id) {
         return repository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException(
@@ -54,6 +58,7 @@ public class DonanteService {
         existente.setEmail(datos.getEmail());
         existente.setTelefono(datos.getTelefono());
         existente.setDireccion(datos.getDireccion());
+        existente.setCentroAcopioId(datos.getCentroAcopioId());
         existente.setActivo(datos.getActivo());
 
         return repository.save(existente);
@@ -70,5 +75,10 @@ public class DonanteService {
     public void eliminar(Long id) {
         Donante existente = buscarPorId(id);
         repository.delete(existente);
+    }
+
+    @Transactional
+    public void eliminarPorCentro(Long centroAcopioId) {
+        repository.deleteByCentroAcopioId(centroAcopioId);
     }
 }

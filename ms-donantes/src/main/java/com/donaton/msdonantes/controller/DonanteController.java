@@ -35,6 +35,11 @@ public class DonanteController {
         return ResponseEntity.ok(service.buscarPorId(id));
     }
 
+    @GetMapping("/centro/{centroId}")
+    public ResponseEntity<List<Donante>> listarPorCentro(@PathVariable Long centroId) {
+        return ResponseEntity.ok(service.listarPorCentro(centroId));
+    }
+
 
     @PostMapping
     public ResponseEntity<Donante> crear(@Valid @RequestBody Donante donante) {
@@ -60,6 +65,12 @@ public class DonanteController {
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> eliminar(@PathVariable Long id) {
         service.eliminar(id);
+        return ResponseEntity.noContent().build();
+    }
+
+    @DeleteMapping("/centro/{centroId}")
+    public ResponseEntity<Void> eliminarPorCentro(@PathVariable Long centroId) {
+        service.eliminarPorCentro(centroId);
         return ResponseEntity.noContent().build();
     }
 }

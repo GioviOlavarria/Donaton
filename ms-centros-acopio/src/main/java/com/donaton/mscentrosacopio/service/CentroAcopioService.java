@@ -1,6 +1,7 @@
 package com.donaton.mscentrosacopio.service;
 
 
+import com.donaton.mscentrosacopio.client.RelacionMicroserviciosClient;
 import com.donaton.mscentrosacopio.model.CentroAcopio;
 import com.donaton.mscentrosacopio.repository.CentroAcopioRepository;
 import jakarta.persistence.EntityNotFoundException;
@@ -14,6 +15,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class CentroAcopioService {
     private final CentroAcopioRepository repository;
+    private final RelacionMicroserviciosClient relacionMicroserviciosClient;
 
     public List<CentroAcopio> listarTodos() {
         return repository.findAll();
@@ -47,6 +49,7 @@ public class CentroAcopioService {
 
     public void eliminar(Long id){
         CentroAcopio existente = buscarPorId(id);
+        relacionMicroserviciosClient.eliminarDatosAsociadosAlCentro(id);
         repository.delete(existente);
     }
 
