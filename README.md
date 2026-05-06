@@ -4,7 +4,10 @@ Proyecto Donaton para Fullstack 3.
 
 # Ejecutar el proyecto
 
-docker compose up --build -d
+Ejecutar docker desktop exe
+Abrir Powershell/Consola linux
+
+Ejecutar el comando docker compose up --build -d
 
 
 
