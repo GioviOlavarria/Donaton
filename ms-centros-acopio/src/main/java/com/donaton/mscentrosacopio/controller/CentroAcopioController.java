@@ -9,6 +9,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Collections;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/centros")
@@ -60,6 +62,11 @@ public class CentroAcopioController {
     public ResponseEntity<Void> eliminar(@PathVariable Long id) {
         service.eliminar(id);
         return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/count")
+    public ResponseEntity<Map<String, Long>> contarCentros() {
+        return ResponseEntity.ok(Collections.singletonMap("count", service.countCentroAcopio()));
     }
 
 }

@@ -36,4 +36,8 @@ public class donacionAcopioService {
     public void deleteDonacionAcopio(Long id){
         repositoryDonacionAcopio.deleteById(id);
     }
+
+    public long countDonacionAcopio(){
+        return repositoryDonacionAcopio.count();
+    }
 }

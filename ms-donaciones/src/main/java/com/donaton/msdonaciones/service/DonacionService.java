@@ -82,4 +82,8 @@ public class DonacionService {
     public void eliminarPorCentro(Long centroAcopioId) {
         repository.deleteByCentroAcopioId(centroAcopioId);
     }
+
+    public long countDonacion(){
+        return repository.count();
+    }
 }

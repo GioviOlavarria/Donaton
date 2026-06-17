@@ -10,6 +10,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Collections;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/donaciones")
@@ -84,5 +86,10 @@ public class DonacionController {
     public ResponseEntity<Void> eliminarPorCentro(@PathVariable Long centroId) {
         service.eliminarPorCentro(centroId);
         return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/count")
+    public ResponseEntity<Map<String, Long>> contarDonaciones() {
+        return ResponseEntity.ok(Collections.singletonMap("count", service.countDonacion()));
     }
 }

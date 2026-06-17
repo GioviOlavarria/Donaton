@@ -1,6 +1,8 @@
 package com.donacionAcopio.ms.Controller;
 
 import java.util.List;
+import java.util.Collections;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -93,6 +95,11 @@ public class donacionAcopioController {
         }catch(Exception e){
             return ResponseEntity.notFound().build();
         }
+    }
+
+    @GetMapping("/donacionAcopio/count")
+    public ResponseEntity<Map<String, Long>> countDonacionAcopio(){
+        return ResponseEntity.ok(Collections.singletonMap("count", serviceDonacionAcopio.countDonacionAcopio()));
     }
 
 }

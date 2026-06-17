@@ -58,5 +58,8 @@ public class CentroAcopioService {
         existente.setActivo(false);
         repository.save(existente);
     }
-
+    
+    public long countCentroAcopio(){
+        return repository.count();
+    }
 }
