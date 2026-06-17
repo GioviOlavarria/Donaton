@@ -8,7 +8,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/donantes")
@@ -40,6 +42,10 @@ public class DonanteController {
         return ResponseEntity.ok(service.listarPorCentro(centroId));
     }
 
+    @GetMapping("/count")
+    public ResponseEntity<Map<String, Long>> contarDonantes() {
+    return ResponseEntity.ok(Collections.singletonMap("count", service.countDonante()));
+    }
 
     @PostMapping
     public ResponseEntity<Donante> crear(@Valid @RequestBody Donante donante) {

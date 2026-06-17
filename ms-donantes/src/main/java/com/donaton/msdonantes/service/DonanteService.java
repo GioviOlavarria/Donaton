@@ -33,6 +33,10 @@ public class DonanteService {
                         "Donante no encontrado con id: " + id));
     }
 
+    public long countDonante(){
+        return repository.count();
+    }
+    
     @Transactional
     public Donante guardar(Donante donante) {
         if (repository.existsByEmail(donante.getEmail())) {
