@@ -6,538 +6,66 @@
     <title>Donaton · Panel de Administración</title>
     <link rel="preconnect" href="https://fonts.googleapis.com"/>
     <link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@400;700;900&family=Epilogue:wght@300;400;500;600&display=swap" rel="stylesheet"/>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
     <style>
         *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
         :root {
-            --bg: #0f1115;
-            --surface: #171a21;
-            --card: #1e2230;
-            --border: #2a2f3d;
-            --accent: #5b8def;
-            --accent2: #36c5a8;
-            --text: #eef1f7;
-            --muted: #8b93a7;
-            --danger: #ef4444;
+            --bg: #0f1115; --surface: #171a21; --card: #1e2230; --border: #2a2f3d;
+            --accent: #5b8def; --accent2: #36c5a8; --text: #eef1f7; --muted: #8b93a7;
         }
-
-        body {
-            background: var(--bg);
-            color: var(--text);
-            font-family: 'Epilogue', sans-serif;
-            min-height: 100vh;
-        }
-
-        .wrapper { max-width: 1200px; margin: 0 auto; padding: 2rem; }
-
-        header {
-            border-bottom: 1px solid var(--border);
-            padding-bottom: 2rem;
-            margin-bottom: 2.5rem;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-wrap: wrap;
-            gap: 1rem;
-        }
-
-        .header-content h1 {
-            font-family: 'Fraunces', serif;
-            font-size: 2rem;
-            font-weight: 900;
-            margin-bottom: 0.5rem;
-        }
-
-        .header-content p { color: var(--muted); }
-
-        .header-actions { display: flex; gap: 1rem; }
-        .btn {
-            padding: 0.75rem 1.5rem;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            font-weight: 600;
-            font-size: 0.9rem;
-            transition: all 0.2s;
-            text-decoration: none;
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
-            font-family: 'Epilogue', sans-serif;
-        }
-
-        .btn-primary { background: var(--accent); color: white; }
-        .btn-primary:hover { background: #4a6fd8; }
-        .btn-secondary { background: var(--card); color: var(--text); border: 1px solid var(--border); }
-        .btn-secondary:hover { border-color: var(--accent); }
-
-        .tabs {
-            display: flex;
-            gap: 1rem;
-            margin-bottom: 2rem;
-            border-bottom: 1px solid var(--border);
-            padding-bottom: 1rem;
-        }
-
-        .tab {
-            padding: 0.75rem 1.5rem;
-            background: none;
-            border: none;
-            color: var(--muted);
-            cursor: pointer;
-            font-weight: 600;
-            transition: all 0.2s;
-            border-bottom: 2px solid transparent;
-            margin-bottom: -1rem;
-        }
-
-        .tab.active {
-            color: var(--accent);
-            border-bottom-color: var(--accent);
-        }
-
-        .tab:hover { color: var(--text); }
-
-        .content { display: none; }
-        .content.active { display: block; }
-
-        .table-wrapper {
-            background: var(--card);
-            border: 1px solid var(--border);
-            border-radius: 12px;
-            padding: 1.5rem;
-            overflow-x: auto;
-        }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            font-size: 0.9rem;
-        }
-
-        th {
-            background: var(--border);
-            padding: 1rem;
-            text-align: left;
-            color: var(--muted);
-            font-weight: 600;
-        }
-
-        td {
-            padding: 0.75rem 1rem;
-            border-bottom: 1px solid var(--border);
-        }
-
-        tr:hover { background: rgba(91, 141, 239, 0.05); }
-
-        .status-badge {
-            display: inline-block;
-            padding: 0.4rem 0.8rem;
-            border-radius: 4px;
-            font-size: 0.75rem;
-            font-weight: 600;
-        }
-
-        .status-active { background: rgba(54, 197, 168, 0.2); color: var(--accent2); }
-        .status-inactive { background: rgba(239, 68, 68, 0.2); color: var(--danger); }
-
-        .loading {
-            text-align: center;
-            color: var(--muted);
-            padding: 2rem;
-        }
-
-        .loading-spinner {
-            display: inline-block;
-            width: 30px;
-            height: 30px;
-            border: 3px solid var(--border);
-            border-top-color: var(--accent);
-            border-radius: 50%;
-            animation: spin 0.8s linear infinite;
-        }
-
-        @keyframes spin { to { transform: rotate(360deg); } }
-
-        .actions {
-            display: flex;
-            gap: 0.5rem;
-        }
-
-        .action-btn {
-            padding: 0.5rem 0.75rem;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 0.8rem;
-            transition: all 0.2s;
-        }
-
-        .edit-btn { background: var(--accent); color: white; }
-        .delete-btn { background: var(--danger); color: white; }
-        .action-btn:hover { transform: translateY(-2px); }
-
-        .modal {
-            display: none;
-            position: fixed;
-            inset: 0;
-            background: rgba(0, 0, 0, 0.7);
-            align-items: center;
-            justify-content: center;
-            z-index: 1000;
-        }
-
-        .modal.active { display: flex; }
-
-        .modal-content {
-            background: var(--card);
-            border: 1px solid var(--border);
-            border-radius: 12px;
-            padding: 2rem;
-            max-width: 500px;
-            width: 90%;
-        }
-
-        .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; }
-        .modal-header h2 { font-size: 1.5rem; }
-        .close-btn { background: none; border: none; font-size: 1.5rem; cursor: pointer; color: var(--muted); }
-
-        .form-group { margin-bottom: 1.5rem; }
-        label { display: block; font-weight: 600; margin-bottom: 0.5rem; }
-        input, select, textarea {
-            width: 100%;
-            padding: 0.75rem;
-            border: 1px solid var(--border);
-            border-radius: 8px;
-            background: var(--surface);
-            color: var(--text);
-            font-family: 'Epilogue', sans-serif;
-        }
-
-        input:focus, select:focus, textarea:focus {
-            outline: none;
-            border-color: var(--accent);
-        }
-
-        .modal-footer { display: flex; gap: 1rem; justify-content: flex-end; margin-top: 2rem; }
-
-        @media (max-width: 768px) {
-            header { flex-direction: column; }
-            .tabs { flex-wrap: wrap; }
-            .table-wrapper { font-size: 0.8rem; padding: 1rem; }
-            th, td { padding: 0.5rem; }
-        }
+        body { background: var(--bg); color: var(--text); font-family: 'Epilogue', sans-serif; min-height: 100vh; }
+        .wrapper { max-width: 1100px; margin: 0 auto; padding: 3rem 2rem; }
+        header { border-bottom: 1px solid var(--border); padding-bottom: 2rem; margin-bottom: 2.5rem; }
+        .eyebrow { font-size: 0.72rem; letter-spacing: 0.3em; text-transform: uppercase; color: var(--accent); font-weight: 600; margin-bottom: 0.6rem; }
+        h1 { font-family: 'Fraunces', serif; font-size: clamp(2rem, 5vw, 3.2rem); font-weight: 900; line-height: 1; }
+        .sub { color: var(--muted); margin-top: 0.8rem; }
+        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 1rem; }
+        .card { background: var(--card); border: 1px solid var(--border); border-radius: 14px; padding: 1.6rem; transition: transform 0.15s, border-color 0.15s; }
+        .card:hover { transform: translateY(-3px); border-color: var(--accent); }
+        .card .label { font-size: 0.72rem; letter-spacing: 0.15em; text-transform: uppercase; color: var(--muted); margin-bottom: 0.8rem; }
+        .card .value { font-family: 'Fraunces', serif; font-size: 2.8rem; font-weight: 900; line-height: 1; background: linear-gradient(135deg, var(--accent), var(--accent2)); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; }
+        footer { margin-top: 3rem; color: var(--muted); font-size: 0.8rem; }
     </style>
 </head>
 <body>
 <div class="wrapper">
     <header>
-        <div class="header-content">
-            <h1><i class="fas fa-cog"></i> Panel de Administración</h1>
-            <p>Gestiona donantes, beneficiarios y centros de acopio</p>
-        </div>
-        <div class="header-actions">
-            <a href="http://localhost:8088/" class="btn btn-secondary">
-                <i class="fas fa-home"></i> Inicio
-            </a>
-            <button class="btn btn-secondary" onclick="logout()">
-                <i class="fas fa-sign-out-alt"></i> Cerrar sesión
-            </button>
-        </div>
+        <div class="eyebrow">Donaton · Administración</div>
+        <h1>Panel de control</h1>
+        <p class="sub">Resumen agregado en tiempo real desde los microservicios. Si un servicio está caído, su contador muestra 0 sin afectar al resto.</p>
     </header>
 
-    <!-- Tabs -->
-    <div class="tabs">
-        <button class="tab active" onclick="switchTab('donantes')"><i class="fas fa-heart"></i> Donantes</button>
-        <button class="tab" onclick="switchTab('beneficiarios')"><i class="fas fa-hand-holding-heart"></i> Beneficiarios</button>
-        <button class="tab" onclick="switchTab('centros')"><i class="fas fa-warehouse"></i> Centros de Acopio</button>
-        <button class="tab" onclick="switchTab('donaciones')"><i class="fas fa-box"></i> Donaciones</button>
-    </div>
-
-    <!-- Donantes Tab -->
-    <div id="donantes" class="content active">
-        <div class="table-wrapper">
-            <div id="donantes-list" class="loading">
-                <div class="loading-spinner"></div>
-                <p>Cargando donantes...</p>
-            </div>
+    <div class="grid">
+        <div class="card">
+            <div class="label">Donantes</div>
+            <div class="value" th:text="${resumen.donantes}">0</div>
+        </div>
+        <div class="card">
+            <div class="label">Beneficiantes</div>
+            <div class="value" th:text="${resumen.beneficiarios}">0</div>
+        </div>
+        <div class="card">
+            <div class="label">Centros de acopio</div>
+            <div class="value" th:text="${resumen.centros}">0</div>
+        </div>
+        <div class="card">
+            <div class="label">Donaciones</div>
+            <div class="value" th:text="${resumen.donaciones}">0</div>
+        </div>
+        <div class="card">
+            <div class="label">Comunas</div>
+            <div class="value" th:text="${resumen.comunas}">0</div>
+        </div>
+        <div class="card">
+            <div class="label">Tipos de donación</div>
+            <div class="value" th:text="${resumen.tiposDonacion}">0</div>
+        </div>
+        <div class="card">
+            <div class="label">Tipos de beneficiante</div>
+            <div class="value" th:text="${resumen.tiposBeneficiante}">0</div>
         </div>
     </div>
 
-    <!-- Beneficiarios Tab -->
-    <div id="beneficiarios" class="content">
-        <div class="table-wrapper">
-            <div id="beneficiarios-list" class="loading">
-                <div class="loading-spinner"></div>
-                <p>Cargando beneficiarios...</p>
-            </div>
-        </div>
-    </div>
-
-    <!-- Centros Tab -->
-    <div id="centros" class="content">
-        <div class="table-wrapper">
-            <div id="centros-list" class="loading">
-                <div class="loading-spinner"></div>
-                <p>Cargando centros...</p>
-            </div>
-        </div>
-    </div>
-
-    <!-- Donaciones Tab -->
-    <div id="donaciones" class="content">
-        <div class="table-wrapper">
-            <div id="donaciones-list" class="loading">
-                <div class="loading-spinner"></div>
-                <p>Cargando donaciones...</p>
-            </div>
-        </div>
-    </div>
+    <footer>Donaton · Sistema de donaciones centralizado · Región Metropolitana</footer>
 </div>
-
-<!-- Modal -->
-<div id="modal" class="modal">
-    <div class="modal-content">
-        <div class="modal-header">
-            <h2 id="modal-title">Editar</h2>
-            <button class="close-btn" onclick="closeModal()">&times;</button>
-        </div>
-        <form id="modal-form" onsubmit="handleSubmit(event)">
-            <div id="modal-body"></div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" onclick="closeModal()">Cancelar</button>
-                <button type="submit" class="btn btn-primary">Guardar</button>
-            </div>
-        </form>
-    </div>
-</div>
-
-<script>
-    const API_URLS = {
-        donantes: 'http://localhost:8081/api/donantes',
-        beneficiarios: 'http://localhost:8082/api/beneficiarios',
-        centros: 'http://localhost:8083/api/centros',
-        donaciones: 'http://localhost:8084/api/donaciones'
-    };
-
-    async function fetchWithTimeout(url, timeout = 5000) {
-        const controller = new AbortController();
-        const timeoutId = setTimeout(() => controller.abort(), timeout);
-        try {
-            const response = await fetch(url, { signal: controller.signal });
-            clearTimeout(timeoutId);
-            if (!response.ok) throw new Error(`HTTP ${response.status}`);
-            return await response.json();
-        } catch (error) {
-            clearTimeout(timeoutId);
-            console.error(`Error: ${error.message}`);
-            return null;
-        }
-    }
-
-    function switchTab(tabName) {
-        // Hide all content
-        document.querySelectorAll('.content').forEach(el => el.classList.remove('active'));
-        document.querySelectorAll('.tab').forEach(el => el.classList.remove('active'));
-
-        // Show selected content
-        document.getElementById(tabName).classList.add('active');
-        event.target.classList.add('active');
-
-        // Load data
-        if (tabName === 'donantes') loadDonantes();
-        else if (tabName === 'beneficiarios') loadBeneficiarios();
-        else if (tabName === 'centros') loadCentros();
-        else if (tabName === 'donaciones') loadDonaciones();
-    }
-
-    async function loadDonantes() {
-        const data = await fetchWithTimeout(API_URLS.donantes);
-        if (!data) {
-            document.getElementById('donantes-list').innerHTML = '<p style="color: var(--danger);">Error cargando donantes</p>';
-            return;
-        }
-
-        const html = `
-            <table>
-                <thead>
-                    <tr>
-                        <th>ID</th>
-                        <th>Nombre</th>
-                        <th>Email</th>
-                        <th>Teléfono</th>
-                        <th>Estado</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    ${data.map(d => `
-                        <tr>
-                            <td>${d.id}</td>
-                            <td>${d.nombre || '-'} ${d.apellido || ''}</td>
-                            <td>${d.email || '-'}</td>
-                            <td>${d.telefono || '-'}</td>
-                            <td>
-                                <span class="status-badge ${d.activo ? 'status-active' : 'status-inactive'}">
-                                    ${d.activo ? '✓ Activo' : '✗ Inactivo'}
-                                </span>
-                            </td>
-                        </tr>
-                    `).join('')}
-                </tbody>
-            </table>
-        `;
-        document.getElementById('donantes-list').innerHTML = html;
-    }
-
-    async function loadBeneficiarios() {
-        const data = await fetchWithTimeout(API_URLS.beneficiarios);
-        if (!data) {
-            document.getElementById('beneficiarios-list').innerHTML = '<p style="color: var(--danger);">Error cargando beneficiarios</p>';
-            return;
-        }
-
-        const html = `
-            <table>
-                <thead>
-                    <tr>
-                        <th>ID</th>
-                        <th>Nombre</th>
-                        <th>RUT</th>
-                        <th>Necesidad</th>
-                        <th>Centro</th>
-                        <th>Estado</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    ${data.map(b => `
-                        <tr>
-                            <td>${b.id}</td>
-                            <td>${b.nombre || '-'} ${b.apellido || ''}</td>
-                            <td>${b.rut || '-'}</td>
-                            <td>${b.necesidad || '-'}</td>
-                            <td>Centro #${b.centroAcopioId}</td>
-                            <td>
-                                <span class="status-badge ${b.activo ? 'status-active' : 'status-inactive'}">
-                                    ${b.activo ? '✓ Activo' : '✗ Inactivo'}
-                                </span>
-                            </td>
-                        </tr>
-                    `).join('')}
-                </tbody>
-            </table>
-        `;
-        document.getElementById('beneficiarios-list').innerHTML = html;
-    }
-
-    async function loadCentros() {
-        const data = await fetchWithTimeout(API_URLS.centros);
-        if (!data) {
-            document.getElementById('centros-list').innerHTML = '<p style="color: var(--danger);">Error cargando centros</p>';
-            return;
-        }
-
-        const html = `
-            <table>
-                <thead>
-                    <tr>
-                        <th>ID</th>
-                        <th>Nombre</th>
-                        <th>Dirección</th>
-                        <th>Teléfono</th>
-                        <th>Email</th>
-                        <th>Estado</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    ${data.map(c => `
-                        <tr>
-                            <td>${c.id}</td>
-                            <td>${c.nombre || '-'}</td>
-                            <td>${c.direccion || '-'}</td>
-                            <td>${c.telefono || '-'}</td>
-                            <td>${c.email || '-'}</td>
-                            <td>
-                                <span class="status-badge ${c.activo ? 'status-active' : 'status-inactive'}">
-                                    ${c.activo ? '✓ Activo' : '✗ Inactivo'}
-                                </span>
-                            </td>
-                        </tr>
-                    `).join('')}
-                </tbody>
-            </table>
-        `;
-        document.getElementById('centros-list').innerHTML = html;
-    }
-
-    async function loadDonaciones() {
-        const data = await fetchWithTimeout(API_URLS.donaciones);
-        if (!data) {
-            document.getElementById('donaciones-list').innerHTML = '<p style="color: var(--danger);">Error cargando donaciones</p>';
-            return;
-        }
-
-        const html = `
-            <table>
-                <thead>
-                    <tr>
-                        <th>ID</th>
-                        <th>Artículo</th>
-                        <th>Cantidad</th>
-                        <th>Donante ID</th>
-                        <th>Centro</th>
-                        <th>Estado</th>
-                        <th>Fecha</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    ${data.map(d => `
-                        <tr>
-                            <td>${d.id}</td>
-                            <td>${d.articulo || '-'}</td>
-                            <td>${d.cantidad}</td>
-                            <td>${d.donanteId || '-'}</td>
-                            <td>${d.centroAcopioId || '-'}</td>
-                            <td>
-                                <span style="color: ${getStatusColor(d.estado)}">
-                                    ${d.estado}
-                                </span>
-                            </td>
-                            <td>${new Date(d.creadoEn).toLocaleDateString('es-ES')}</td>
-                        </tr>
-                    `).join('')}
-                </tbody>
-            </table>
-        `;
-        document.getElementById('donaciones-list').innerHTML = html;
-    }
-
-    function getStatusColor(estado) {
-        const colors = {
-            'ENTREGADA': '#36c5a8',
-            'EN_TRANSITO': '#5b8def',
-            'PENDIENTE': '#f59e0b',
-            'ASIGNADA': '#a78bfa',
-            'CANCELADA': '#ef4444'
-        };
-        return colors[estado] || 'var(--muted)';
-    }
-
-    function closeModal() {
-        document.getElementById('modal').classList.remove('active');
-    }
-
-    function handleSubmit(event) {
-        event.preventDefault();
-        closeModal();
-    }
-
-    function logout() {
-        window.location.href = 'http://localhost:8088/';
-    }
-
-    // Load initial data
-    document.addEventListener('DOMContentLoaded', loadDonantes);
-</script>
 </body>
 </html>
-

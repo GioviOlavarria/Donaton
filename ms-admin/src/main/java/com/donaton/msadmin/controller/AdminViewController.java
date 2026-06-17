@@ -26,12 +26,7 @@ public class AdminViewController {
     @Value("${donaton.public.tipos}")
     private String urlTipos;
 
-    @GetMapping("/")
-    public String home() {
-        return "home";
-    }
-
-    @GetMapping("/panel")
+    @GetMapping({"/", "/panel"})
     public String panel(Model model) {
         model.addAttribute("resumen", gateway.resumen());
         model.addAttribute("urlDonantes",      urlDonantes);
