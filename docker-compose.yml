@@ -333,6 +333,7 @@ services:
       - "${FRONTEND_APP_PORT:-3000}:80"
     volumes:
       - ./ms-frontend/index.html:/usr/share/nginx/html/index.html:ro
+      - ./ms-frontend/panel.html:/usr/share/nginx/html/panel.html:ro
       - ./ms-frontend/nginx.conf:/etc/nginx/conf.d/default.conf:ro
     healthcheck:
       test: ["CMD-SHELL", "wget -qO- http://localhost:80/ || exit 1"]
