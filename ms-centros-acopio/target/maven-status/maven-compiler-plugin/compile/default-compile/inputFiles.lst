@@ -1,0 +1,6 @@
+/workspace/ms-centros-acopio/src/main/java/com/donaton/mscentrosacopio/MsCentrosAcopioApplication.java
+/workspace/ms-centros-acopio/src/main/java/com/donaton/mscentrosacopio/controller/CentroAcopioController.java
+/workspace/ms-centros-acopio/src/main/java/com/donaton/mscentrosacopio/controller/CentroAcopioViewController.java
+/workspace/ms-centros-acopio/src/main/java/com/donaton/mscentrosacopio/model/CentroAcopio.java
+/workspace/ms-centros-acopio/src/main/java/com/donaton/mscentrosacopio/repository/CentroAcopioRepository.java
+/workspace/ms-centros-acopio/src/main/java/com/donaton/mscentrosacopio/service/CentroAcopioService.java
