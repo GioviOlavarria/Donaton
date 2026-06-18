@@ -92,6 +92,99 @@ services:
     networks:
       - donaton-network
 
+  db-comunas:
+    image: mysql:8.0
+    container_name: donaton-db-comunas
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE:      ${COMUNAS_DB_NAME}
+      MYSQL_USER:          ${COMUNAS_DB_USER}
+      MYSQL_PASSWORD:      ${COMUNAS_DB_PASSWORD}
+    command: --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
+    ports:
+      - "${COMUNAS_DB_PORT}:3306"
+    volumes:
+      - comunas-data:/var/lib/mysql
+      - ./db-init/comunas:/docker-entrypoint-initdb.d
+    healthcheck:
+      test: ["CMD-SHELL", "mysqladmin ping -h localhost -u root -p${MYSQL_ROOT_PASSWORD} --silent"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+    networks:
+      - donaton-network
+
+  db-tipos:
+    image: mysql:8.0
+    container_name: donaton-db-tipos
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE:      ${TIPOS_DB_NAME}
+      MYSQL_USER:          ${TIPOS_DB_USER}
+      MYSQL_PASSWORD:      ${TIPOS_DB_PASSWORD}
+    command: --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
+    ports:
+      - "${TIPOS_DB_PORT}:3306"
+    volumes:
+      - tipos-data:/var/lib/mysql
+      - ./db-init/tipos:/docker-entrypoint-initdb.d
+    healthcheck:
+      test: ["CMD-SHELL", "mysqladmin ping -h localhost -u root -p${MYSQL_ROOT_PASSWORD} --silent"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+    networks:
+      - donaton-network
+
+  db-auth:
+    image: mysql:8.0
+    container_name: donaton-db-auth
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE:      ${AUTH_DB_NAME}
+      MYSQL_USER:          ${AUTH_DB_USER}
+      MYSQL_PASSWORD:      ${AUTH_DB_PASSWORD}
+    command: --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
+    ports:
+      - "${AUTH_DB_PORT}:3306"
+    volumes:
+      - auth-data:/var/lib/mysql
+      - ./db-init/auth:/docker-entrypoint-initdb.d
+    healthcheck:
+      test: ["CMD-SHELL", "mysqladmin ping -h localhost -u root -p${MYSQL_ROOT_PASSWORD} --silent"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+    networks:
+      - donaton-network
+
+  # FIX: db-necesidad faltaba completamente en el docker-compose original
+  db-necesidad:
+    image: mysql:8.0
+    container_name: donaton-db-necesidad
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE:      ${NECESIDAD_DB_NAME}
+      MYSQL_USER:          ${NECESIDAD_DB_USER}
+      MYSQL_PASSWORD:      ${NECESIDAD_DB_PASSWORD}
+    command: --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
+    ports:
+      - "${NECESIDAD_DB_PORT}:3306"
+    volumes:
+      - necesidad-data:/var/lib/mysql
+      - ./db-init/necesidad:/docker-entrypoint-initdb.d
+    healthcheck:
+      test: ["CMD-SHELL", "mysqladmin ping -h localhost -u root -p${MYSQL_ROOT_PASSWORD} --silent"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+    networks:
+      - donaton-network
+
   ms-centros-acopio:
     build:
       context: ./ms-centros-acopio
@@ -160,11 +253,132 @@ services:
     networks:
       - donaton-network
 
+  ms-comunas:
+    build:
+      context: ./ms-comunas
+      dockerfile: Dockerfile
+    container_name: donaton-ms-comunas
+    ports:
+      - "${COMUNAS_APP_PORT}:8085"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://db-comunas:3306/${COMUNAS_DB_NAME}?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=America/Santiago&useUnicode=true&characterEncoding=UTF-8
+      SPRING_DATASOURCE_USERNAME: ${COMUNAS_DB_USER}
+      SPRING_DATASOURCE_PASSWORD: ${COMUNAS_DB_PASSWORD}
+    depends_on:
+      db-comunas:
+        condition: service_healthy
+    networks:
+      - donaton-network
+
+  ms-tipos:
+    build:
+      context: ./ms-tipos
+      dockerfile: Dockerfile
+    container_name: donaton-ms-tipos
+    ports:
+      - "${TIPOS_APP_PORT}:8086"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://db-tipos:3306/${TIPOS_DB_NAME}?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=America/Santiago&useUnicode=true&characterEncoding=UTF-8
+      SPRING_DATASOURCE_USERNAME: ${TIPOS_DB_USER}
+      SPRING_DATASOURCE_PASSWORD: ${TIPOS_DB_PASSWORD}
+    depends_on:
+      db-tipos:
+        condition: service_healthy
+    networks:
+      - donaton-network
+
+  ms-auth:
+    build:
+      context: ./ms-auth
+      dockerfile: Dockerfile
+    container_name: donaton-ms-auth
+    ports:
+      - "${AUTH_APP_PORT}:8087"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://db-auth:3306/${AUTH_DB_NAME}?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=America/Santiago&useUnicode=true&characterEncoding=UTF-8
+      SPRING_DATASOURCE_USERNAME: ${AUTH_DB_USER}
+      SPRING_DATASOURCE_PASSWORD: ${AUTH_DB_PASSWORD}
+      DONATON_JWT_SECRET: ${DONATON_JWT_SECRET}
+      DONATON_JWT_EXPIRATION_MS: ${DONATON_JWT_EXPIRATION_MS}
+    depends_on:
+      db-auth:
+        condition: service_healthy
+    networks:
+      - donaton-network
+
+  # FIX: ms-necesidad faltaba completamente en el docker-compose original
+  ms-necesidad:
+    build:
+      context: ./ms-necesidad
+      dockerfile: Dockerfile
+    container_name: donaton-ms-necesidad
+    ports:
+      - "${NECESIDAD_APP_PORT}:8089"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://db-necesidad:3306/${NECESIDAD_DB_NAME}?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=America/Santiago
+      SPRING_DATASOURCE_USERNAME: ${NECESIDAD_DB_USER}
+      SPRING_DATASOURCE_PASSWORD: ${NECESIDAD_DB_PASSWORD}
+    depends_on:
+      db-necesidad:
+        condition: service_healthy
+    networks:
+      - donaton-network
+
+  ms-frontend:
+    build:
+      context: ./ms-frontend
+      dockerfile: Dockerfile
+    container_name: donaton-ms-frontend
+    ports:
+      - "${FRONTEND_APP_PORT:-3000}:80"
+    volumes:
+      - ./ms-frontend/index.html:/usr/share/nginx/html/index.html:ro
+      - ./ms-frontend/panel.html:/usr/share/nginx/html/panel.html:ro
+      - ./ms-frontend/nginx.conf:/etc/nginx/conf.d/default.conf:ro
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://localhost:80/ || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 5s
+    networks:
+      - donaton-network
+
+  ms-admin:
+    build:
+      context: ./ms-admin
+      dockerfile: Dockerfile
+    container_name: donaton-ms-admin
+    ports:
+      - "${ADMIN_APP_PORT}:8088"
+    environment:
+      SVC_DONANTES: http://ms-donantes:8081
+      SVC_BENEFICIARIOS: http://ms-beneficiarios:8082
+      SVC_CENTROS: http://ms-centros-acopio:8083
+      SVC_DONACIONES: http://ms-donaciones:8084
+      SVC_COMUNAS: http://ms-comunas:8085
+      SVC_TIPOS: http://ms-tipos:8086
+      SVC_AUTH: http://ms-auth:8087
+    depends_on:
+      - ms-donantes
+      - ms-beneficiarios
+      - ms-centros-acopio
+      - ms-donaciones
+      - ms-comunas
+      - ms-tipos
+      - ms-auth
+    networks:
+      - donaton-network
+
 volumes:
   centros-data:
   donantes-data:
   beneficiarios-data:
   donaciones-data:
+  comunas-data:
+  tipos-data:
+  auth-data:
+  necesidad-data:
 
 networks:
   donaton-network:

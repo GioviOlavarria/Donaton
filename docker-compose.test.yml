@@ -1,0 +1,46 @@
+services:
+
+  test-runner:
+    image: maven:3.9.6-eclipse-temurin-21
+    working_dir: /workspace
+    volumes:
+      - .:/workspace
+      - maven-cache:/root/.m2
+    command: >
+      bash -c "
+        set -e
+        PASS=0
+        FAIL=0
+
+        run_test() {
+          MS=$$1
+          echo ''
+          echo '========================================'
+          echo \"▶ Testeando $$MS/\"
+          echo '========================================'
+          if mvn test -f /workspace/$$MS/pom.xml -B; then
+            PASS=$$((PASS + 1))
+          else
+            FAIL=$$((FAIL + 1))
+          fi
+        }
+
+        run_test ms-auth
+        run_test ms-beneficiarios
+        run_test ms-centros-acopio
+        run_test ms-comunas
+        run_test ms-donaciones
+        run_test ms-donantes
+        run_test ms-necesidad
+        run_test ms-tipos
+
+        echo ''
+        echo '========================================'
+        echo \"RESULTADO FINAL: $$PASS OK / $$FAIL FALLIDOS\"
+        echo '========================================'
+
+        exit $$FAIL
+      "
+
+volumes:
+  maven-cache:

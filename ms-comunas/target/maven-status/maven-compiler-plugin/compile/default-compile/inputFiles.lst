@@ -1,0 +1,6 @@
+/workspace/ms-comunas/src/main/java/com/donaton/mscomunas/MsComunasApplication.java
+/workspace/ms-comunas/src/main/java/com/donaton/mscomunas/config/CorsConfig.java
+/workspace/ms-comunas/src/main/java/com/donaton/mscomunas/controller/ComunaController.java
+/workspace/ms-comunas/src/main/java/com/donaton/mscomunas/model/Comuna.java
+/workspace/ms-comunas/src/main/java/com/donaton/mscomunas/repository/ComunaRepository.java
+/workspace/ms-comunas/src/main/java/com/donaton/mscomunas/service/ComunaService.java

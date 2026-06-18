@@ -1,0 +1,153 @@
+-- ============================================================
+-- DONATON - Modelo Entidad-Relación Adaptado
+-- Región Metropolitana de Santiago (fijo, sin tabla REGION)
+-- Base de datos: PostgreSQL
+-- ============================================================
+
+-- ============================================================
+-- LIMPIEZA (ejecutar solo si se requiere reiniciar)
+-- ============================================================
+DROP TABLE IF EXISTS NECESIDAD CASCADE;
+DROP TABLE IF EXISTS DONACION_ACOPIO CASCADE;
+DROP TABLE IF EXISTS DONACION CASCADE;
+DROP TABLE IF EXISTS BENEFICIANTE CASCADE;
+DROP TABLE IF EXISTS CENTRO_ACOPIO CASCADE;
+DROP TABLE IF EXISTS DONANTE CASCADE;
+DROP TABLE IF EXISTS TIPO_BENEFICIANTE CASCADE;
+DROP TABLE IF EXISTS TIPO_DONACION CASCADE;
+DROP TABLE IF EXISTS COMUNA CASCADE;
+
+-- ============================================================
+-- TABLA: COMUNA
+-- Solo comunas de la Región Metropolitana
+-- ============================================================
+CREATE TABLE COMUNA (
+    ID     SERIAL PRIMARY KEY,
+    NOMBRE VARCHAR(100) NOT NULL
+);
+
+-- ============================================================
+-- TABLA: TIPO_DONACION
+-- ============================================================
+CREATE TABLE TIPO_DONACION (
+    ID            SERIAL PRIMARY KEY,
+    CLASIFICACION VARCHAR(100) NOT NULL,
+    DESCRIPCION   VARCHAR(300)
+);
+
+-- ============================================================
+-- TABLA: TIPO_BENEFICIANTE
+-- ============================================================
+CREATE TABLE TIPO_BENEFICIANTE (
+    ID        SERIAL PRIMARY KEY,
+    CATEGORIA VARCHAR(100) NOT NULL
+);
+
+-- ============================================================
+-- TABLA: DONANTE
+-- ============================================================
+CREATE TABLE DONANTE (
+    ID         SERIAL PRIMARY KEY,
+    CORREO     VARCHAR(150) NOT NULL,
+    CONTRASENA VARCHAR(255) NOT NULL,
+    NOMBRE     VARCHAR(150) NOT NULL,
+    RUT        VARCHAR(10)  NOT NULL,
+    DV         CHAR(1)      NOT NULL,
+    CONSTRAINT UQ_DONANTE_CORREO UNIQUE (CORREO),
+    CONSTRAINT UQ_DONANTE_RUT    UNIQUE (RUT)
+);
+
+-- ============================================================
+-- TABLA: CENTRO_ACOPIO
+-- REGION_ID eliminado; la región es siempre Metropolitana
+-- ============================================================
+CREATE TABLE CENTRO_ACOPIO (
+    ID               SERIAL PRIMARY KEY,
+    COMUNA_ID        INTEGER      NOT NULL,
+    NOMBRE           VARCHAR(150) NOT NULL,
+    DIRECCION        VARCHAR(300) NOT NULL,
+    CAPACIDAD        INTEGER      NOT NULL,
+    CAPACIDAD_ACTUAL INTEGER      NOT NULL DEFAULT 0,
+    CONSTRAINT FK_CA_COMUNA       FOREIGN KEY (COMUNA_ID) REFERENCES COMUNA(ID),
+    CONSTRAINT CHK_CA_CAP         CHECK (CAPACIDAD_ACTUAL <= CAPACIDAD),
+    CONSTRAINT CHK_CA_CAP_POS     CHECK (CAPACIDAD_ACTUAL >= 0)
+);
+CREATE INDEX IDX_CENTRO_COMUNA ON CENTRO_ACOPIO (COMUNA_ID);
+
+-- ============================================================
+-- TABLA: BENEFICIANTE
+-- ============================================================
+CREATE TABLE BENEFICIANTE (
+    ID                   SERIAL PRIMARY KEY,
+    TIPO_BENEFICIANTE_ID INTEGER      NOT NULL,
+    CENTRO_ACOPIO_ID     INTEGER      NOT NULL,
+    RUT                  VARCHAR(10)  NOT NULL,
+    DV                   CHAR(1)      NOT NULL,
+    NOMBRE               VARCHAR(150) NOT NULL,
+    RAZON                VARCHAR(500),
+    TIPO_SINIESTRO       VARCHAR(100),
+    FECHA_SINIESTRO      DATE,
+    CONSTRAINT UQ_BENEFICIANTE_RUT  UNIQUE (RUT),
+    CONSTRAINT FK_BEN_TIPO_BEN      FOREIGN KEY (TIPO_BENEFICIANTE_ID) REFERENCES TIPO_BENEFICIANTE(ID),
+    CONSTRAINT FK_BEN_CENTRO        FOREIGN KEY (CENTRO_ACOPIO_ID)     REFERENCES CENTRO_ACOPIO(ID)
+);
+CREATE INDEX IDX_BENEFICIANTE_CENTRO ON BENEFICIANTE (CENTRO_ACOPIO_ID);
+
+-- ============================================================
+-- TABLA: DONACION
+-- ============================================================
+CREATE TABLE DONACION (
+    ID               SERIAL PRIMARY KEY,
+    DONANTE_ID       INTEGER        NOT NULL,
+    TIPO_DONACION_ID INTEGER        NOT NULL,
+    NOMBRE           VARCHAR(150)   NOT NULL,
+    CANTIDAD         NUMERIC(10,2)  NOT NULL,
+    FECHA            DATE           NOT NULL DEFAULT CURRENT_DATE,
+    DESCRIPCION      VARCHAR(500),
+    ESTADO           VARCHAR(50)    NOT NULL DEFAULT 'PENDIENTE',
+    CONSTRAINT FK_DON_DONANTE    FOREIGN KEY (DONANTE_ID)       REFERENCES DONANTE(ID),
+    CONSTRAINT FK_DON_TIPO_DON   FOREIGN KEY (TIPO_DONACION_ID) REFERENCES TIPO_DONACION(ID),
+    CONSTRAINT CHK_DON_ESTADO    CHECK (ESTADO IN ('PENDIENTE','EN_TRANSITO','RECIBIDA','DISTRIBUIDA','CANCELADA')),
+    CONSTRAINT CHK_DON_CANTIDAD  CHECK (CANTIDAD > 0)
+);
+CREATE INDEX IDX_DONACION_DONANTE ON DONACION (DONANTE_ID);
+CREATE INDEX IDX_DONACION_TIPO    ON DONACION (TIPO_DONACION_ID);
+
+-- ============================================================
+-- TABLA: DONACION_ACOPIO
+-- ============================================================
+CREATE TABLE DONACION_ACOPIO (
+    ID               SERIAL PRIMARY KEY,
+    DONACION_ID      INTEGER     NOT NULL,
+    CENTRO_ACOPIO_ID INTEGER     NOT NULL,
+    FECHA_RECEPCION  DATE        NOT NULL DEFAULT CURRENT_DATE,
+    ESTADO           VARCHAR(50) NOT NULL DEFAULT 'RECIBIDA',
+    CONSTRAINT FK_DA_DONACION FOREIGN KEY (DONACION_ID)      REFERENCES DONACION(ID),
+    CONSTRAINT FK_DA_CENTRO   FOREIGN KEY (CENTRO_ACOPIO_ID) REFERENCES CENTRO_ACOPIO(ID),
+    CONSTRAINT CHK_DA_ESTADO  CHECK (ESTADO IN ('RECIBIDA','PROCESADA','DISTRIBUIDA'))
+);
+CREATE INDEX IDX_DONACION_ACOPIO_DON  ON DONACION_ACOPIO (DONACION_ID);
+CREATE INDEX IDX_DONACION_ACOPIO_CENT ON DONACION_ACOPIO (CENTRO_ACOPIO_ID);
+
+-- ============================================================
+-- TABLA: NECESIDAD
+-- ============================================================
+CREATE TABLE NECESIDAD (
+    ID                 SERIAL PRIMARY KEY,
+    CENTRO_ACOPIO_ID   INTEGER       NOT NULL,
+    TIPO_DONACION_ID   INTEGER       NOT NULL,
+    BENEFICIANTE_ID    INTEGER,
+    CANTIDAD_REQUERIDA NUMERIC(10,2) NOT NULL,
+    CANTIDAD_ACTUAL    NUMERIC(10,2) NOT NULL DEFAULT 0,
+    ESTADO             VARCHAR(50)   NOT NULL DEFAULT 'ACTIVA',
+    FECHA_CREACION     DATE          NOT NULL DEFAULT CURRENT_DATE,
+    CONSTRAINT FK_NEC_CENTRO    FOREIGN KEY (CENTRO_ACOPIO_ID) REFERENCES CENTRO_ACOPIO(ID),
+    CONSTRAINT FK_NEC_TIPO_DON  FOREIGN KEY (TIPO_DONACION_ID) REFERENCES TIPO_DONACION(ID),
+    CONSTRAINT FK_NEC_BENEF     FOREIGN KEY (BENEFICIANTE_ID)  REFERENCES BENEFICIANTE(ID),
+    CONSTRAINT CHK_NEC_ESTADO   CHECK (ESTADO IN ('ACTIVA','CUBIERTA','CANCELADA')),
+    CONSTRAINT CHK_NEC_CANT     CHECK (CANTIDAD_REQUERIDA > 0),
+    CONSTRAINT CHK_NEC_ACTUAL   CHECK (CANTIDAD_ACTUAL >= 0)
+);
+CREATE INDEX IDX_NECESIDAD_CENTRO ON NECESIDAD (CENTRO_ACOPIO_ID);
+CREATE INDEX IDX_NECESIDAD_TIPO   ON NECESIDAD (TIPO_DONACION_ID);
+CREATE INDEX IDX_NECESIDAD_ESTADO ON NECESIDAD (ESTADO);
