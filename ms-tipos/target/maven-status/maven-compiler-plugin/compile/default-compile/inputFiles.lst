@@ -1,0 +1,9 @@
+/workspace/ms-tipos/src/main/java/com/donaton/mstipos/MsTiposApplication.java
+/workspace/ms-tipos/src/main/java/com/donaton/mstipos/config/CorsConfig.java
+/workspace/ms-tipos/src/main/java/com/donaton/mstipos/controller/TipoBeneficianteController.java
+/workspace/ms-tipos/src/main/java/com/donaton/mstipos/controller/TipoDonacionController.java
+/workspace/ms-tipos/src/main/java/com/donaton/mstipos/model/TipoBeneficiante.java
+/workspace/ms-tipos/src/main/java/com/donaton/mstipos/model/TipoDonacion.java
+/workspace/ms-tipos/src/main/java/com/donaton/mstipos/repository/TipoBeneficianteRepository.java
+/workspace/ms-tipos/src/main/java/com/donaton/mstipos/repository/TipoDonacionRepository.java
+/workspace/ms-tipos/src/main/java/com/donaton/mstipos/service/TipoService.java

@@ -1,0 +1,3 @@
+/workspace/ms-auth/src/test/java/com/donaton/msauth/MsAuthApplicationTests.java
+/workspace/ms-auth/src/test/java/com/donaton/msauth/security/JwtServiceTest.java
+/workspace/ms-auth/src/test/java/com/donaton/msauth/service/AuthServiceTest.java

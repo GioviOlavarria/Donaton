@@ -1,4 +1,4 @@
-# DOCUMENTACION - PROYECTO DONATON
+ñl# DOCUMENTACION - PROYECTO DONATON
 
 ## Tabla de Contenidos
 
@@ -245,7 +245,7 @@ El proyecto consta de 10 microservicios independientes, cada uno responsable de 
 
 ---
 
-### 9. ms-frontend (Puerto 80/3000)
+### 9. ms-frontend (Puerto 80/+)
 
 **Responsabilidad**: Interfaz web pública para donantes y beneficiarios.
 
