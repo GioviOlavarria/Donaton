@@ -1,0 +1,1328 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Donatón – Conectando corazones con necesidades</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Sora:wght@300;400;600;700;800&family=Inter:wght@300;400;500;600&display=swap');
+
+:root {
+  --verde:    #1a8c5c;
+  --verde-cl: #e6f6ef;
+  --verde-dk: #0f5c3a;
+  --naranja:  #f06c2a;
+  --nar-cl:   #fdf0e8;
+  --azul:     #1e4fa8;
+  --azul-cl:  #e8eef9;
+  --gris-bg:  #f7f8fa;
+  --gris-bd:  #e2e5ea;
+  --texto:    #1c2330;
+  --sub:      #5a6275;
+  --blanco:   #ffffff;
+  --shadow:   0 2px 16px rgba(0,0,0,0.08);
+  --shadow-lg:0 8px 40px rgba(0,0,0,0.13);
+  --r:        12px;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body { font-family: 'Inter', sans-serif; background: var(--gris-bg); color: var(--texto); min-height: 100vh; }
+
+.hidden { display: none !important; }
+.flex { display: flex; }
+.flex-col { flex-direction: column; }
+.gap-sm { gap: 8px; }
+.gap-md { gap: 16px; }
+.gap-lg { gap: 24px; }
+.center { text-align: center; }
+
+/* NAV */
+nav {
+  position: sticky; top: 0; z-index: 100;
+  background: var(--blanco);
+  border-bottom: 1px solid var(--gris-bd);
+  padding: 0 32px; height: 60px;
+  display: flex; align-items: center; justify-content: space-between;
+  box-shadow: 0 1px 8px rgba(0,0,0,0.06);
+}
+.nav-logo { font-family: 'Sora', sans-serif; font-size: 22px; font-weight: 800; color: var(--verde); letter-spacing: -0.5px; }
+.nav-logo span { color: var(--naranja); }
+.nav-actions { display: flex; gap: 10px; align-items: center; }
+.nav-user { font-size: 13px; color: var(--sub); font-weight: 500; padding: 6px 14px; background: var(--gris-bg); border-radius: 20px; border: 1px solid var(--gris-bd); }
+
+/* BOTONES */
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+  padding: 10px 22px; border-radius: 8px;
+  font-family: 'Inter', sans-serif; font-size: 14px; font-weight: 600;
+  border: none; cursor: pointer; transition: all .18s ease; text-decoration: none;
+}
+.btn-primary { background: var(--verde); color: var(--blanco); }
+.btn-primary:hover { background: var(--verde-dk); transform: translateY(-1px); }
+.btn-outline { background: transparent; color: var(--verde); border: 2px solid var(--verde); }
+.btn-outline:hover { background: var(--verde-cl); }
+.btn-danger { background: #e53935; color: var(--blanco); }
+.btn-danger:hover { background: #c62828; }
+.btn-ghost { background: transparent; color: var(--sub); border: 1px solid var(--gris-bd); }
+.btn-ghost:hover { background: var(--gris-bg); }
+.btn-sm { padding: 7px 14px; font-size: 13px; border-radius: 6px; }
+.btn-lg { padding: 14px 32px; font-size: 16px; border-radius: 10px; }
+.btn-block { width: 100%; }
+.btn-naranja { background: var(--naranja); color: var(--blanco); }
+.btn-naranja:hover { background: #d45c1f; }
+.btn-white { background: var(--blanco); color: var(--verde-dk); }
+.btn-white:hover { background: #f0f0f0; }
+.btn-white-outline { background: transparent; color: var(--blanco); border: 2px solid rgba(255,255,255,0.7); }
+.btn-white-outline:hover { background: rgba(255,255,255,0.15); }
+.btn:disabled { opacity: 0.5; cursor: not-allowed; pointer-events: none; }
+
+/* ALERTAS */
+.alert { padding: 12px 16px; border-radius: 8px; font-size: 14px; font-weight: 500; }
+.alert-success { background: #e6f6ef; color: #0a5c35; border: 1px solid #9edec0; }
+.alert-error   { background: #fdecea; color: #b71c1c; border: 1px solid #f5c6c6; }
+.alert-info    { background: var(--azul-cl); color: var(--azul); border: 1px solid #b3c7ef; }
+.alert-warning { background: #fff8e1; color: #b45309; border: 1px solid #fcd34d; }
+
+/* SPINNER */
+.spinner { display: inline-block; width: 18px; height: 18px; border: 2px solid rgba(255,255,255,0.3); border-top-color: #fff; border-radius: 50%; animation: spin .7s linear infinite; }
+.spinner-dark { border-color: rgba(0,0,0,0.15); border-top-color: var(--verde); }
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* FORMULARIOS */
+.form-group { display: flex; flex-direction: column; gap: 6px; }
+.form-group label { font-size: 13px; font-weight: 600; color: var(--texto); }
+.form-group input, .form-group select, .form-group textarea {
+  padding: 10px 14px; border: 1.5px solid var(--gris-bd); border-radius: 8px;
+  font-size: 14px; font-family: 'Inter', sans-serif; background: var(--blanco);
+  color: var(--texto); transition: border-color .15s;
+  width: 100%;
+}
+.form-group input:focus, .form-group select:focus, .form-group textarea:focus {
+  outline: none; border-color: var(--verde);
+  box-shadow: 0 0 0 3px rgba(26,140,92,0.1);
+}
+.form-group textarea { resize: vertical; min-height: 90px; }
+.form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+
+/* LANDING */
+#page-landing { display: block; }
+
+.hero {
+  background: linear-gradient(135deg, var(--verde-dk) 0%, var(--verde) 60%, #2db87a 100%);
+  padding: 80px 32px 90px;
+  text-align: center; color: var(--blanco);
+  position: relative; overflow: hidden;
+}
+.hero::before {
+  content: '';
+  position: absolute; inset: 0;
+  pointer-events: none;
+  background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none'%3E%3Cg fill='%23ffffff' fill-opacity='0.04'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+}
+.hero-eyebrow { font-size: 13px; font-weight: 600; letter-spacing: 1px; text-transform: uppercase; opacity: .75; margin-bottom: 18px; }
+.hero h1 { font-family: 'Sora', sans-serif; font-size: clamp(32px, 5vw, 56px); font-weight: 800; line-height: 1.1; margin-bottom: 18px; }
+.hero h1 em { color: #7de8b8; font-style: normal; }
+.hero p { font-size: 17px; opacity: .85; max-width: 520px; margin: 0 auto 36px; line-height: 1.6; }
+.hero-btns { display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; }
+
+.stats-bar { background: var(--blanco); border-bottom: 1px solid var(--gris-bd); padding: 28px 32px; }
+.stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 24px; max-width: 900px; margin: 0 auto; text-align: center; }
+.stat-num { font-family: 'Sora', sans-serif; font-size: 32px; font-weight: 800; color: var(--verde); }
+.stat-label { font-size: 13px; color: var(--sub); margin-top: 4px; }
+
+.section-landing { padding: 64px 32px; max-width: 960px; margin: 0 auto; }
+.section-title { font-family: 'Sora', sans-serif; font-size: 26px; font-weight: 700; margin-bottom: 8px; }
+.section-sub { color: var(--sub); font-size: 15px; margin-bottom: 40px; }
+
+.how-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 24px; }
+.how-card { background: var(--blanco); border: 1px solid var(--gris-bd); border-radius: var(--r); padding: 28px 24px; }
+.how-num { font-family: 'Sora', sans-serif; font-size: 36px; font-weight: 800; color: var(--verde-cl); line-height: 1; margin-bottom: 12px; }
+.how-card h4 { font-size: 16px; font-weight: 700; margin-bottom: 8px; }
+.how-card p { font-size: 14px; color: var(--sub); line-height: 1.6; }
+
+.cta-band { background: var(--verde-dk); color: var(--blanco); padding: 56px 32px; text-align: center; }
+.cta-band h2 { font-family: 'Sora', sans-serif; font-size: 28px; font-weight: 700; margin-bottom: 10px; }
+.cta-band p { font-size: 16px; opacity: .8; margin-bottom: 28px; }
+
+/* AUTH */
+/* page-auth starts hidden via class, not CSS ID rule */
+.auth-wrap { min-height: calc(100vh - 60px); display: flex; align-items: center; justify-content: center; padding: 32px 16px; background: var(--gris-bg); }
+.auth-box { background: var(--blanco); border: 1px solid var(--gris-bd); border-radius: 16px; padding: 40px 36px; width: 100%; max-width: 460px; box-shadow: var(--shadow-lg); }
+.auth-logo { font-family: 'Sora', sans-serif; font-size: 26px; font-weight: 800; color: var(--verde); text-align: center; margin-bottom: 6px; }
+.auth-logo span { color: var(--naranja); }
+.auth-box h2 { font-family: 'Sora', sans-serif; font-size: 20px; font-weight: 700; text-align: center; margin-bottom: 6px; }
+.auth-desc { text-align: center; color: var(--sub); font-size: 14px; margin-bottom: 28px; }
+.auth-tabs { display: flex; background: var(--gris-bg); border-radius: 10px; padding: 4px; margin-bottom: 28px; }
+.auth-tab { flex: 1; padding: 9px; border: none; background: transparent; border-radius: 7px; font-size: 14px; font-weight: 600; color: var(--sub); cursor: pointer; transition: all .18s; font-family: 'Inter', sans-serif; }
+.auth-tab.active { background: var(--blanco); color: var(--texto); box-shadow: var(--shadow); }
+
+.tipo-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 20px; }
+.tipo-card { border: 2px solid var(--gris-bd); border-radius: 10px; padding: 18px 14px; text-align: center; cursor: pointer; transition: all .18s; }
+.tipo-card:hover { border-color: var(--verde); background: var(--verde-cl); }
+.tipo-card.selected { border-color: var(--verde); background: var(--verde-cl); }
+.tipo-card.selected .tipo-name { color: var(--verde); }
+.tipo-icon { font-size: 28px; margin-bottom: 8px; }
+.tipo-name { font-weight: 700; font-size: 15px; margin-bottom: 4px; }
+.tipo-desc { font-size: 12px; color: var(--sub); }
+
+.auth-divider { text-align: center; color: var(--sub); font-size: 13px; margin: 20px 0; position: relative; }
+.auth-divider::before { content: ''; position: absolute; top: 50%; left: 0; right: 0; height: 1px; background: var(--gris-bd); }
+.auth-divider span { background: var(--blanco); padding: 0 12px; position: relative; }
+
+/* PANEL GENERAL */
+.panel-layout { display: grid; grid-template-columns: 240px 1fr; min-height: calc(100vh - 60px); }
+.sidebar { background: var(--blanco); border-right: 1px solid var(--gris-bd); padding: 24px 0; }
+.sidebar-header { padding: 0 20px 16px; border-bottom: 1px solid var(--gris-bd); margin-bottom: 8px; }
+.sidebar-header .user-role { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .8px; color: var(--verde); margin-bottom: 4px; }
+.sidebar-header .user-name { font-weight: 700; font-size: 15px; }
+.sidebar-header .user-email { font-size: 12px; color: var(--sub); margin-top: 2px; }
+.sidebar-link {
+  display: flex; align-items: center; gap: 10px;
+  padding: 11px 20px; font-size: 14px; font-weight: 500; color: var(--sub);
+  cursor: pointer; transition: all .15s; border-left: 3px solid transparent;
+}
+.sidebar-link:hover { background: var(--gris-bg); color: var(--texto); }
+.sidebar-link.active { background: var(--verde-cl); color: var(--verde); border-left-color: var(--verde); font-weight: 600; }
+.sidebar-link .link-icon { font-size: 16px; }
+.panel-content { padding: 32px; overflow-y: auto; }
+.panel-section { background: var(--blanco); border: 1px solid var(--gris-bd); border-radius: var(--r); padding: 28px; margin-bottom: 24px; }
+.panel-section h3 { font-family: 'Sora', sans-serif; font-size: 17px; font-weight: 700; margin-bottom: 20px; display: flex; align-items: center; gap: 8px; }
+.panel-view { display: none; }
+.panel-view.active { display: block; }
+
+/* KPIs */
+.kpi-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 16px; margin-bottom: 24px; }
+.kpi-card { background: var(--blanco); border: 1px solid var(--gris-bd); border-radius: var(--r); padding: 20px; text-align: center; }
+.kpi-label { font-size: 12px; color: var(--sub); font-weight: 600; text-transform: uppercase; letter-spacing: .5px; margin-bottom: 6px; }
+.kpi-value { font-family: 'Sora', sans-serif; font-size: 28px; font-weight: 800; color: var(--verde); }
+
+/* TABLAS */
+.table-wrap { overflow-x: auto; border-radius: 8px; border: 1px solid var(--gris-bd); }
+table { width: 100%; border-collapse: collapse; font-size: 13px; }
+thead th { background: var(--gris-bg); padding: 10px 14px; text-align: left; font-weight: 600; color: var(--sub); font-size: 12px; text-transform: uppercase; letter-spacing: .4px; border-bottom: 1px solid var(--gris-bd); }
+tbody td { padding: 12px 14px; border-bottom: 1px solid #f0f2f5; color: var(--texto); }
+tbody tr:last-child td { border-bottom: none; }
+tbody tr:hover td { background: var(--gris-bg); }
+
+/* BADGES */
+.badge { display: inline-block; padding: 3px 10px; border-radius: 20px; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .4px; }
+.badge-pendiente { background: #fff8e1; color: #b45309; }
+.badge-entregada  { background: #e6f6ef; color: #0a5c35; }
+.badge-cancelada  { background: #fdecea; color: #b71c1c; }
+.badge-en_transito { background: #e8eef9; color: #1e4fa8; }
+
+/* CENTROS GRID */
+.centros-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 12px; margin-bottom: 16px; }
+.centro-card {
+  border: 2px solid var(--gris-bd); border-radius: 10px; padding: 16px 14px;
+  cursor: pointer; transition: all .18s;
+}
+.centro-card:hover { border-color: var(--verde); box-shadow: 0 2px 12px rgba(26,140,92,0.1); }
+.centro-card.selected { border-color: var(--verde); background: var(--verde-cl); }
+.centro-card .c-name { font-weight: 700; font-size: 14px; margin-bottom: 4px; }
+.centro-card .c-dir { font-size: 12px; color: var(--sub); }
+.centro-card .c-tag { font-size: 11px; margin-top: 6px; color: var(--verde); font-weight: 600; }
+
+/* MODAL */
+.modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 200; display: flex; align-items: center; justify-content: center; padding: 16px; }
+.modal { background: var(--blanco); border-radius: var(--r); padding: 32px; width: 100%; max-width: 480px; box-shadow: var(--shadow-lg); }
+.modal h3 { font-family: 'Sora', sans-serif; font-size: 18px; font-weight: 700; margin-bottom: 20px; }
+.modal-footer { display: flex; gap: 10px; justify-content: flex-end; margin-top: 24px; }
+
+/* RESPONSIVE */
+@media (max-width: 768px) {
+  .panel-layout { grid-template-columns: 1fr; }
+  .sidebar { display: none; }
+  .form-row { grid-template-columns: 1fr; }
+  .hero { padding: 48px 20px 56px; }
+  nav { padding: 0 16px; }
+  .auth-box { padding: 28px 20px; }
+}
+
+/* EMPTY STATE */
+.empty-state { padding: 48px 24px; text-align: center; color: var(--sub); }
+.empty-state .empty-icon { font-size: 40px; margin-bottom: 12px; }
+.empty-state p { font-size: 14px; }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-logo" onclick="goHome()" style="cursor:pointer">Donat<span>ón</span></div>
+  <div class="nav-actions" id="nav-actions">
+    <button class="btn btn-ghost btn-sm" onclick="showPage('auth','login')">Iniciar sesión</button>
+    <button class="btn btn-primary btn-sm" onclick="showPage('auth','registro')">Registrarse</button>
+  </div>
+</nav>
+
+<!-- ══════════════ LANDING ══════════════ -->
+<div id="page-landing">
+  <section class="hero">
+    <div class="hero-eyebrow">🇨🇱 Red solidaria de donaciones</div>
+    <h1>Conecta tu <em>generosidad</em><br>con quienes más la necesitan</h1>
+    <p>Donatón une a donantes con centros de acopio y familias beneficiarias de forma simple, transparente y segura.</p>
+    <div class="hero-btns">
+      <button class="btn btn-white btn-lg" onclick="showPage('auth','registro-donante')">💚 Quiero donar</button>
+      <button class="btn btn-white-outline btn-lg" onclick="showPage('auth','registro-beneficiario')">🤝 Necesito ayuda</button>
+    </div>
+  </section>
+
+  <div class="stats-bar">
+    <div class="stats-grid">
+      <div><div class="stat-num" id="stat-centros">–</div><div class="stat-label">Centros de acopio</div></div>
+      <div><div class="stat-num" id="stat-donantes">–</div><div class="stat-label">Donantes activos</div></div>
+      <div><div class="stat-num" id="stat-donaciones">–</div><div class="stat-label">Donaciones realizadas</div></div>
+      <div><div class="stat-num" id="stat-tipos">–</div><div class="stat-label">Tipos de artículos</div></div>
+    </div>
+  </div>
+
+  <div class="section-landing">
+    <div class="section-title">¿Cómo funciona?</div>
+    <div class="section-sub">Tres pasos para conectar tu generosidad con quienes más la necesitan</div>
+    <div class="how-grid">
+      <div class="how-card">
+        <div class="how-num">01</div>
+        <h4>Crea tu cuenta</h4>
+        <p>Regístrate como donante o beneficiario en menos de 2 minutos. Solo necesitas tu correo y algunos datos básicos.</p>
+        <br>
+        <button class="btn btn-primary btn-sm" onclick="showPage('auth','registro')">Crear cuenta →</button>
+      </div>
+      <div class="how-card">
+        <div class="how-num">02</div>
+        <h4>Elige un centro</h4>
+        <p>Encuentra el centro de acopio más cercano a ti. Verás su dirección, teléfono y qué artículos necesitan.</p>
+      </div>
+      <div class="how-card">
+        <div class="how-num">03</div>
+        <h4>Dona o recibe</h4>
+        <p>Los donantes registran su entrega; los beneficiarios solicitan lo que necesitan. Seguimiento en tiempo real.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="cta-band">
+    <h2>¿Listo para marcar la diferencia?</h2>
+    <p>Únete a la red de solidaridad más grande de Chile</p>
+    <button class="btn btn-white btn-lg" onclick="showPage('auth','registro')">Comenzar ahora</button>
+  </div>
+
+  <!-- ── DASHBOARDS LANDING ── -->
+  <div class="section-landing" id="section-dashboards">
+    <div class="section-title">Actividad en tiempo real</div>
+    <div class="section-sub">Estado actual de la plataforma Donatón</div>
+
+    <!-- Metas de donaciones -->
+    <div style="background:var(--blanco);border:1px solid var(--gris-bd);border-radius:var(--r);padding:28px;margin-bottom:24px;">
+      <h3 style="font-family:'Sora',sans-serif;font-size:17px;font-weight:700;margin-bottom:20px;">🎯 Metas de donaciones</h3>
+      <div id="metas-container">
+        <div style="text-align:center;padding:24px;color:var(--sub)"><span class="spinner spinner-dark"></span> Cargando…</div>
+      </div>
+    </div>
+
+    <!-- Donaciones recientes -->
+    <div style="background:var(--blanco);border:1px solid var(--gris-bd);border-radius:var(--r);padding:28px;margin-bottom:24px;">
+      <h3 style="font-family:'Sora',sans-serif;font-size:17px;font-weight:700;margin-bottom:20px;">📦 Donaciones recientes</h3>
+      <div class="table-wrap">
+        <table style="width:100%;border-collapse:collapse;font-size:14px;">
+          <thead><tr style="background:var(--gris-bg);text-align:left;">
+            <th style="padding:10px 14px;font-size:12px;font-weight:700;color:var(--sub);text-transform:uppercase;letter-spacing:.5px;">Artículo</th>
+            <th style="padding:10px 14px;font-size:12px;font-weight:700;color:var(--sub);text-transform:uppercase;letter-spacing:.5px;">Cantidad</th>
+            <th style="padding:10px 14px;font-size:12px;font-weight:700;color:var(--sub);text-transform:uppercase;letter-spacing:.5px;">Estado</th>
+            <th style="padding:10px 14px;font-size:12px;font-weight:700;color:var(--sub);text-transform:uppercase;letter-spacing:.5px;">Fecha</th>
+          </tr></thead>
+          <tbody id="tbody-recientes">
+            <tr><td colspan="4" style="padding:24px;text-align:center;color:var(--sub)"><span class="spinner spinner-dark"></span> Cargando…</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /page-landing -->
+
+<!-- ══════════════ AUTH ══════════════ -->
+<div id="page-auth" class="hidden">
+  <div class="auth-wrap">
+    <div class="auth-box">
+      <div class="auth-logo">Donat<span>ón</span></div>
+
+      <div class="auth-tabs" id="auth-tabs">
+        <button class="auth-tab active" id="tab-login-btn" onclick="switchAuthTab('login')">Iniciar sesión</button>
+        <button class="auth-tab" id="tab-reg-btn" onclick="switchAuthTab('registro')">Registrarse</button>
+      </div>
+
+      <div id="auth-msg" class="hidden" style="margin-bottom:16px"></div>
+
+      <!-- LOGIN -->
+      <div id="tab-login">
+        <h2>Bienvenido</h2>
+        <p class="auth-desc">Ingresa tus credenciales para continuar</p>
+        <div style="display:flex;flex-direction:column;gap:16px">
+          <div class="form-group">
+            <label>Correo electrónico</label>
+            <input type="email" id="login-email" placeholder="tu@correo.cl"/>
+          </div>
+          <div class="form-group">
+            <label>Contraseña</label>
+            <input type="password" id="login-pass" placeholder="••••••" onkeydown="if(event.key==='Enter') doLogin()"/>
+          </div>
+          <button class="btn btn-primary btn-block" id="btn-login" onclick="doLogin()">
+            Ingresar
+          </button>
+        </div>
+        <div class="auth-divider"><span>¿No tienes cuenta?</span></div>
+        <button class="btn btn-outline btn-block" onclick="switchAuthTab('registro')">Crear cuenta gratis</button>
+      </div>
+
+      <!-- REGISTRO -->
+      <div id="tab-registro" class="hidden">
+        <h2>Crear cuenta</h2>
+        <p class="auth-desc">¿Cómo quieres participar?</p>
+
+        <div class="tipo-grid">
+          <div class="tipo-card" id="tipo-donante" onclick="selectTipo('DONANTE')">
+            <div class="tipo-icon">💚</div>
+            <div class="tipo-name">Donante</div>
+            <div class="tipo-desc">Quiero aportar artículos</div>
+          </div>
+          <div class="tipo-card" id="tipo-beneficiario" onclick="selectTipo('BENEFICIANTE')">
+            <div class="tipo-icon">🤝</div>
+            <div class="tipo-name">Beneficiario</div>
+            <div class="tipo-desc">Necesito recibir ayuda</div>
+          </div>
+        </div>
+
+        <div style="display:flex;flex-direction:column;gap:14px" id="reg-form-fields">
+          <div class="form-row">
+            <div class="form-group">
+              <label>Nombre</label>
+              <input type="text" id="reg-nombre" placeholder="Juan"/>
+            </div>
+            <div class="form-group">
+              <label>Apellido</label>
+              <input type="text" id="reg-apellido" placeholder="Pérez"/>
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Correo electrónico</label>
+            <input type="email" id="reg-email" placeholder="tu@correo.cl"/>
+          </div>
+          <div class="form-group">
+            <label>Contraseña (mín. 6 caracteres)</label>
+            <input type="password" id="reg-pass" placeholder="••••••"/>
+          </div>
+          <div class="form-group">
+            <label>Teléfono <span style="color:var(--sub);font-weight:400">(opcional)</span></label>
+            <input type="tel" id="reg-tel" placeholder="+56 9 1234 5678"/>
+          </div>
+
+          <!-- Solo donante -->
+          <div class="form-group hidden" id="campo-direccion">
+            <label>Dirección</label>
+            <input type="text" id="reg-dir" placeholder="Calle y número"/>
+          </div>
+
+          <!-- Solo beneficiario -->
+          <div class="form-group hidden" id="campo-rut">
+            <label>RUT</label>
+            <input type="text" id="reg-rut" placeholder="12.345.678-9"/>
+          </div>
+          <div class="form-group hidden" id="campo-centro">
+            <label>Centro de acopio</label>
+            <select id="reg-centro">
+              <option value="">Cargando centros…</option>
+            </select>
+          </div>
+          <div class="form-group hidden" id="campo-necesidad">
+            <label>Describe tu necesidad <span style="color:var(--sub);font-weight:400">(opcional)</span></label>
+            <textarea id="reg-necesidad" placeholder="Cuéntanos brevemente qué tipo de ayuda necesitas…"></textarea>
+          </div>
+
+          <div id="auth-msg-reg" class="hidden"></div>
+          <button class="btn btn-primary btn-block" id="btn-registro" onclick="doRegistro()" disabled>
+            Crear cuenta
+          </button>
+        </div>
+
+        <div class="auth-divider"><span>¿Ya tienes cuenta?</span></div>
+        <a href="#" onclick="switchAuthTab('login');return false" style="display:block;text-align:center;color:var(--verde);font-weight:600;font-size:14px;text-decoration:none">Iniciar sesión</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════ PANEL DONANTE ══════════════ -->
+<div id="page-donante" class="hidden">
+  <div class="panel-layout">
+    <!-- Sidebar -->
+    <div class="sidebar">
+      <div class="sidebar-header">
+        <div class="user-role">Donante</div>
+        <div class="user-name" id="dn-nombre">–</div>
+        <div class="user-email" id="dn-email">–</div>
+      </div>
+      <div class="sidebar-link active" onclick="showDonView('inicio')" id="dn-link-inicio"><span class="link-icon">🏠</span> Inicio</div>
+      <div class="sidebar-link" onclick="showDonView('donar')" id="dn-link-donar"><span class="link-icon">📦</span> Realizar donación</div>
+      <div class="sidebar-link" onclick="showDonView('historial')" id="dn-link-historial"><span class="link-icon">📋</span> Mis donaciones</div>
+      <div class="sidebar-link" style="margin-top:auto;border-top:1px solid var(--gris-bd);margin-top:16px;padding-top:16px" onclick="logout()"><span class="link-icon">🚪</span> Cerrar sesión</div>
+    </div>
+
+    <!-- Contenido -->
+    <div class="panel-content">
+
+      <!-- Vista: Inicio -->
+      <div class="panel-view active" id="dn-view-inicio">
+        <h2 style="font-family:'Sora',sans-serif;font-weight:700;margin-bottom:20px">¡Hola, <span id="dn-greeting">donante</span>! 👋</h2>
+        <div class="kpi-grid">
+          <div class="kpi-card"><div class="kpi-label">Mis donaciones</div><div class="kpi-value" id="kpi-mis-donaciones">–</div></div>
+          <div class="kpi-card"><div class="kpi-label">Entregadas</div><div class="kpi-value" id="kpi-entregadas">–</div></div>
+          <div class="kpi-card"><div class="kpi-label">Centros activos</div><div class="kpi-value" id="kpi-centros">–</div></div>
+          <div class="kpi-card"><div class="kpi-label">Tipos de artículos</div><div class="kpi-value" id="kpi-tipos">–</div></div>
+        </div>
+        <div class="panel-section">
+          <h3>💡 ¿Qué puedes hacer?</h3>
+          <p style="color:var(--sub);font-size:14px;line-height:1.7">
+            Como <strong>donante</strong>, puedes registrar artículos que deseas entregar a un centro de acopio.
+            Los beneficiarios asignados a ese centro los recibirán. Usa el menú lateral para realizar una nueva donación o consultar el historial de tus entregas.
+          </p>
+          <br>
+          <button class="btn btn-primary" onclick="showDonView('donar')">📦 Realizar una donación</button>
+        </div>
+      </div>
+
+      <!-- Vista: Donar -->
+      <div class="panel-view" id="dn-view-donar">
+        <div class="panel-section">
+          <h3>📦 Realizar donación</h3>
+
+          <div style="margin-bottom:20px">
+            <label style="font-size:13px;font-weight:600;display:block;margin-bottom:10px">1. Elige el centro de acopio</label>
+            <div class="centros-grid" id="centros-don-grid">
+              <div style="color:var(--sub);font-size:13px;grid-column:1/-1">Cargando centros… <span class="spinner spinner-dark" style="vertical-align:middle"></span></div>
+            </div>
+          </div>
+
+          <div id="form-donacion" style="display:flex;flex-direction:column;gap:16px">
+            <div id="msg-donacion" class="hidden"></div>
+            <div class="form-group">
+              <label>2. Tipo de artículo a donar</label>
+              <select id="don-tipo">
+                <option value="">Selecciona el tipo de donación…</option>
+              </select>
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label>Descripción del artículo</label>
+                <input type="text" id="don-articulo" placeholder="Ej: Ropa de invierno, talla M"/>
+              </div>
+              <div class="form-group">
+                <label>Cantidad</label>
+                <input type="number" id="don-cantidad" min="1" value="1"/>
+              </div>
+            </div>
+            <div class="form-group">
+              <label>Observaciones <span style="color:var(--sub);font-weight:400">(opcional)</span></label>
+              <textarea id="don-obs" placeholder="Condición del artículo, hora de entrega, etc."></textarea>
+            </div>
+            <button class="btn btn-primary btn-lg" onclick="enviarDonacion()">
+              Registrar donación
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Vista: Historial -->
+      <div class="panel-view" id="dn-view-historial">
+        <div class="panel-section">
+          <h3>📋 Mis donaciones registradas</h3>
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>Artículo</th><th>Centro</th><th>Cantidad</th><th>Estado</th><th>Fecha</th></tr></thead>
+              <tbody id="tbody-mis-donaciones">
+                <tr><td colspan="5" style="text-align:center;padding:24px;color:var(--sub)">Cargando… <span class="spinner spinner-dark"></span></td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════ PANEL BENEFICIARIO ══════════════ -->
+<div id="page-beneficiario" class="hidden">
+  <div class="panel-layout">
+    <!-- Sidebar -->
+    <div class="sidebar">
+      <div class="sidebar-header">
+        <div class="user-role">Beneficiario</div>
+        <div class="user-name" id="bn-nombre">–</div>
+        <div class="user-email" id="bn-email">–</div>
+      </div>
+      <div class="sidebar-link active" onclick="showBenView('inicio')" id="bn-link-inicio"><span class="link-icon">🏠</span> Inicio</div>
+      <div class="sidebar-link" onclick="showBenView('solicitar')" id="bn-link-solicitar"><span class="link-icon">📝</span> Solicitar donación</div>
+      <div class="sidebar-link" onclick="showBenView('historial')" id="bn-link-historial"><span class="link-icon">📋</span> Mis solicitudes</div>
+      <div class="sidebar-link" onclick="showBenView('perfil')" id="bn-link-perfil"><span class="link-icon">👤</span> Mi perfil</div>
+      <div class="sidebar-link" style="border-top:1px solid var(--gris-bd);margin-top:16px;padding-top:16px" onclick="logout()"><span class="link-icon">🚪</span> Cerrar sesión</div>
+    </div>
+
+    <!-- Contenido -->
+    <div class="panel-content">
+
+      <!-- Vista: Inicio -->
+      <div class="panel-view active" id="bn-view-inicio">
+        <h2 style="font-family:'Sora',sans-serif;font-weight:700;margin-bottom:20px">¡Hola, <span id="bn-greeting">beneficiario</span>! 👋</h2>
+        <div class="kpi-grid">
+          <div class="kpi-card"><div class="kpi-label">Mis solicitudes</div><div class="kpi-value" id="kpi-mis-sol">–</div></div>
+          <div class="kpi-card"><div class="kpi-label">Recibidas</div><div class="kpi-value" id="kpi-recibidas">–</div></div>
+          <div class="kpi-card"><div class="kpi-label">Pendientes</div><div class="kpi-value" id="kpi-pendientes-ben">–</div></div>
+        </div>
+        <div class="panel-section">
+          <h3>💡 ¿Qué puedes hacer?</h3>
+          <p style="color:var(--sub);font-size:14px;line-height:1.7">
+            Como <strong>beneficiario</strong>, puedes solicitar artículos que necesitas. Estas solicitudes quedan registradas en tu centro de acopio asignado para que los donantes las cubran.
+          </p>
+          <br>
+          <button class="btn btn-naranja" onclick="showBenView('solicitar')">📝 Hacer una solicitud</button>
+        </div>
+      </div>
+
+      <!-- Vista: Solicitar -->
+      <div class="panel-view" id="bn-view-solicitar">
+        <div class="panel-section">
+          <h3>📝 Solicitar donación</h3>
+          <div style="display:flex;flex-direction:column;gap:16px">
+            <div id="msg-solicitud" class="hidden"></div>
+            <div class="form-group">
+              <label>Tipo de artículo que necesitas</label>
+              <select id="sol-tipo">
+                <option value="">Cargando tipos…</option>
+              </select>
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label>Descripción</label>
+                <input type="text" id="sol-articulo" placeholder="Ej: Ropa de abrigo, talla L"/>
+              </div>
+              <div class="form-group">
+                <label>Cantidad</label>
+                <input type="number" id="sol-cantidad" min="1" value="1"/>
+              </div>
+            </div>
+            <div class="form-group">
+              <label>Descripción de la necesidad</label>
+              <textarea id="sol-desc" placeholder="Cuéntanos por qué necesitas estos artículos…"></textarea>
+            </div>
+            <button class="btn btn-naranja btn-lg" onclick="enviarSolicitud()">
+              Enviar solicitud
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Vista: Historial -->
+      <div class="panel-view" id="bn-view-historial">
+        <div class="panel-section">
+          <h3>📋 Mis solicitudes</h3>
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>Artículo</th><th>Tipo</th><th>Cantidad</th><th>Estado</th><th>Fecha</th></tr></thead>
+              <tbody id="tbody-donaciones-benef">
+                <tr><td colspan="5" style="text-align:center;padding:24px;color:var(--sub)">Cargando… <span class="spinner spinner-dark"></span></td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- Vista: Perfil -->
+      <div class="panel-view" id="bn-view-perfil">
+        <div class="panel-section">
+          <h3>👤 Mi información</h3>
+          <div id="bn-info-content" style="display:grid;grid-template-columns:1fr 1fr;gap:16px;font-size:14px">
+            <div style="grid-column:1/-1;text-align:center;padding:24px;color:var(--sub)">Cargando… <span class="spinner spinner-dark"></span></div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<script>
+/* ══════════════════════════════════════
+   CONFIGURACIÓN — Las URLs vacías hacen
+   que el fetch vaya al mismo nginx que
+   sirve este HTML (proxy inverso).
+══════════════════════════════════════ */
+const API = {
+  auth:          '',   // → nginx proxy /api/auth/
+  donantes:      '',   // → nginx proxy /api/donantes
+  beneficiarios: '',   // → nginx proxy /api/beneficiarios
+  centros:       '',   // → nginx proxy /api/centros
+  donaciones:    '',   // → nginx proxy /api/donaciones
+  tipos:         '',   // → nginx proxy /api/tipos-donacion
+};
+
+/* Estado global */
+let state = {
+  token: localStorage.getItem('donaton_token') || null,
+  rol:   localStorage.getItem('donaton_rol')   || null,
+  email: localStorage.getItem('donaton_email') || null,
+  refId: localStorage.getItem('donaton_refId') ? Number(localStorage.getItem('donaton_refId')) : null,
+};
+
+let selectedTipo  = null;
+let selectedCentro = null;
+let centrosCacheReg = [];
+let tiposCache    = [];
+let centrosDonCache = [];
+
+/* ── Fetch helper ── */
+async function apiFetch(url, options = {}) {
+  const headers = { 'Content-Type': 'application/json', ...(options.headers || {}) };
+  if (state.token) headers['Authorization'] = 'Bearer ' + state.token;
+  const res = await fetch(url, { ...options, headers });
+  if (!res.ok) {
+    let msg = `Error ${res.status}`;
+    try { const j = await res.json(); msg = j.message || j.error || JSON.stringify(j) || msg; } catch(_){}
+    throw new Error(msg);
+  }
+  if (res.status === 204) return null;
+  return res.json();
+}
+
+/* ── Navegación ── */
+function showPage(page, extra) {
+  ['landing','auth','donante','beneficiario'].forEach(p => {
+    const el = document.getElementById('page-' + p);
+    if (el) el.classList.add('hidden');
+  });
+  const target = document.getElementById('page-' + page);
+  if (target) target.classList.remove('hidden');
+
+  if (page === 'auth') {
+    clearAuthMsg();
+    if (extra === 'registro' || extra === 'registro-donante' || extra === 'registro-beneficiario') {
+      switchAuthTab('registro');
+      if (extra === 'registro-beneficiario') selectTipo('BENEFICIANTE');
+      else if (extra === 'registro-donante') selectTipo('DONANTE');
+    } else {
+      switchAuthTab('login');
+    }
+  }
+  if (page === 'donante')     loadPanelDonante();
+  if (page === 'beneficiario') loadPanelBenef();
+}
+
+function updateNavAuth() {
+  const na = document.getElementById('nav-actions');
+  if (state.token) {
+    na.innerHTML = `
+      <span class="nav-user">${state.email || ''}</span>
+      <button class="btn btn-ghost btn-sm" onclick="logout()">Salir</button>
+    `;
+  } else {
+    na.innerHTML = `
+      <button class="btn btn-ghost btn-sm" onclick="showPage('auth','login')">Iniciar sesión</button>
+      <button class="btn btn-primary btn-sm" onclick="showPage('auth','registro')">Registrarse</button>
+    `;
+  }
+}
+
+function logout() {
+  localStorage.removeItem('donaton_token');
+  localStorage.removeItem('donaton_rol');
+  localStorage.removeItem('donaton_email');
+  localStorage.removeItem('donaton_refId');
+  state = { token: null, rol: null, email: null, refId: null };
+  updateNavAuth();
+  showPage('landing');
+}
+
+function autoRedirect() {
+  if (!state.token) return;
+  if      (state.rol === 'DONANTE')     showPage('donante');
+  else if (state.rol === 'BENEFICIANTE') showPage('beneficiario');
+  else    showPage('landing');
+}
+
+/* ── Auth tabs ── */
+function switchAuthTab(tab) {
+  document.getElementById('tab-login').classList.toggle('hidden', tab !== 'login');
+  document.getElementById('tab-registro').classList.toggle('hidden', tab !== 'registro');
+  document.getElementById('tab-login-btn').classList.toggle('active', tab === 'login');
+  document.getElementById('tab-reg-btn').classList.toggle('active', tab === 'registro');
+  clearAuthMsg();
+  if (tab === 'registro') loadCentrosParaRegistro();
+}
+
+function showAuthMsg(msg, type = 'error') {
+  ['auth-msg','auth-msg-reg'].forEach(id => {
+    const el = document.getElementById(id);
+    if (!el) return;
+    el.className = `alert alert-${type}`;
+    el.textContent = msg;
+    el.classList.remove('hidden');
+  });
+}
+
+function clearAuthMsg() {
+  ['auth-msg','auth-msg-reg'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.classList.add('hidden');
+  });
+}
+
+/* ── Tipo de cuenta ── */
+function selectTipo(tipo) {
+  selectedTipo = tipo;
+  document.getElementById('tipo-donante').classList.toggle('selected', tipo === 'DONANTE');
+  document.getElementById('tipo-beneficiario').classList.toggle('selected', tipo === 'BENEFICIANTE');
+
+  document.getElementById('campo-direccion').classList.toggle('hidden', tipo !== 'DONANTE');
+  document.getElementById('campo-rut').classList.toggle('hidden', tipo !== 'BENEFICIANTE');
+  document.getElementById('campo-centro').classList.toggle('hidden', tipo !== 'BENEFICIANTE');
+  document.getElementById('campo-necesidad').classList.toggle('hidden', tipo !== 'BENEFICIANTE');
+  document.getElementById('btn-registro').disabled = false;
+}
+
+/* ── Cargar centros para registro ── */
+async function loadCentrosParaRegistro() {
+  if (centrosCacheReg.length > 0) return;
+  try {
+    centrosCacheReg = await apiFetch('/api/centros/activos');
+    const sel = document.getElementById('reg-centro');
+    sel.innerHTML = '<option value="">Selecciona un centro…</option>';
+    centrosCacheReg.forEach(c => {
+      sel.innerHTML += `<option value="${c.id}">${c.nombre} – ${c.comuna || c.direccion}</option>`;
+    });
+  } catch(e) {
+    console.warn('No se pudieron cargar centros:', e);
+    document.getElementById('reg-centro').innerHTML = '<option value="">Error cargando centros</option>';
+  }
+}
+
+/* ── LOGIN ── */
+async function doLogin() {
+  clearAuthMsg();
+  const correo    = document.getElementById('login-email').value.trim();
+  const contrasena = document.getElementById('login-pass').value;
+  if (!correo || !contrasena) return showAuthMsg('Completa todos los campos');
+
+  const btn = document.getElementById('btn-login');
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spinner"></span> Ingresando…';
+
+  try {
+    const data = await apiFetch('/api/auth/login', {
+      method: 'POST',
+      body: JSON.stringify({ correo, contrasena })
+    });
+    saveSession(data);
+    redirectByRole();
+  } catch(e) {
+    showAuthMsg(e.message || 'Credenciales incorrectas');
+  } finally {
+    btn.disabled = false;
+    btn.textContent = 'Ingresar';
+  }
+}
+
+/* ── REGISTRO ── */
+async function doRegistro() {
+  clearAuthMsg();
+  if (!selectedTipo) return showAuthMsg('Elige si eres donante o beneficiario');
+
+  const nombre   = document.getElementById('reg-nombre').value.trim();
+  const apellido = document.getElementById('reg-apellido').value.trim();
+  const email    = document.getElementById('reg-email').value.trim();
+  const pass     = document.getElementById('reg-pass').value;
+  const tel      = document.getElementById('reg-tel').value.trim();
+
+  if (!nombre || !apellido || !email || !pass) return showAuthMsg('Completa nombre, apellido, correo y contraseña');
+  if (pass.length < 6) return showAuthMsg('La contraseña debe tener al menos 6 caracteres');
+
+  const btn = document.getElementById('btn-registro');
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spinner"></span> Creando cuenta…';
+
+  try {
+    let referenciaId = null;
+
+    if (selectedTipo === 'DONANTE') {
+      const donante = await apiFetch('/api/donantes', {
+        method: 'POST',
+        body: JSON.stringify({
+          nombre, apellido,
+          email,
+          telefono: tel || null,
+          direccion: document.getElementById('reg-dir').value.trim() || null,
+          activo: true
+        })
+      });
+      referenciaId = donante.id;
+
+    } else {
+      const rut    = document.getElementById('reg-rut').value.trim();
+      const centro = document.getElementById('reg-centro').value;
+      if (!rut)    return showAuthMsg('El RUT es obligatorio para beneficiarios');
+      if (!centro) return showAuthMsg('Selecciona un centro de acopio');
+
+      const ben = await apiFetch('/api/beneficiarios', {
+        method: 'POST',
+        body: JSON.stringify({
+          nombre, apellido, rut,
+          telefono: tel || null,
+          centroAcopioId: Number(centro),
+          necesidad: document.getElementById('reg-necesidad').value.trim() || null,
+          activo: true
+        })
+      });
+      referenciaId = ben.id;
+    }
+
+    // Registro en auth con la referencia
+    const authData = await apiFetch('/api/auth/registro', {
+      method: 'POST',
+      body: JSON.stringify({
+        correo: email,
+        contrasena: pass,
+        rol: selectedTipo,
+        referenciaId
+      })
+    });
+
+    saveSession(authData);
+    redirectByRole();
+
+  } catch(e) {
+    showAuthMsg(e.message || 'Error al crear la cuenta. Intenta de nuevo.');
+  } finally {
+    btn.disabled = false;
+    btn.textContent = 'Crear cuenta';
+  }
+}
+
+function saveSession(data) {
+  state.token = data.token;
+  state.rol   = data.rol;
+  state.email = data.correo;
+  state.refId = data.referenciaId;
+  localStorage.setItem('donaton_token', data.token);
+  localStorage.setItem('donaton_rol',   data.rol);
+  localStorage.setItem('donaton_email', data.correo);
+  localStorage.setItem('donaton_refId', data.referenciaId);
+  updateNavAuth();
+}
+
+function redirectByRole() {
+  if      (state.rol === 'DONANTE')     showPage('donante');
+  else if (state.rol === 'BENEFICIANTE') showPage('beneficiario');
+  else    showPage('landing');
+}
+
+/* ══════════════════════════
+   PANEL DONANTE
+══════════════════════════ */
+async function loadPanelDonante() {
+  document.getElementById('dn-email').textContent = state.email || '';
+  try {
+    const d = await apiFetch(`/api/donantes/${state.refId}`);
+    document.getElementById('dn-nombre').textContent = `${d.nombre} ${d.apellido}`;
+    document.getElementById('dn-greeting').textContent = d.nombre;
+  } catch(_) {}
+
+  loadCentrosDonante();
+  loadTiposDonacion();
+  loadMisDonaciones();
+}
+
+function showDonView(view) {
+  document.querySelectorAll('#page-donante .panel-view').forEach(v => v.classList.remove('active'));
+  document.getElementById(`dn-view-${view}`).classList.add('active');
+  document.querySelectorAll('#page-donante .sidebar-link').forEach(l => l.classList.remove('active'));
+  document.getElementById(`dn-link-${view}`)?.classList.add('active');
+}
+
+async function loadCentrosDonante() {
+  const grid = document.getElementById('centros-don-grid');
+  try {
+    centrosDonCache = await apiFetch('/api/centros/activos');
+    document.getElementById('kpi-centros').textContent = centrosDonCache.length;
+    if (centrosDonCache.length === 0) {
+      grid.innerHTML = '<div class="empty-state"><div class="empty-icon">🏪</div><p>No hay centros activos</p></div>';
+      return;
+    }
+    grid.innerHTML = centrosDonCache.map(c => `
+      <div class="centro-card" id="cc-${c.id}" onclick="selCentro(${c.id})">
+        <div class="c-name">${c.nombre}</div>
+        <div class="c-dir">📍 ${c.direccion}${c.comuna ? ', '+c.comuna : ''}</div>
+        <div class="c-tag">📞 ${c.telefono || '–'}</div>
+      </div>
+    `).join('');
+  } catch(e) {
+    grid.innerHTML = `<div class="alert alert-error" style="grid-column:1/-1">No se pudieron cargar los centros: ${e.message}</div>`;
+  }
+}
+
+function selCentro(id) {
+  selectedCentro = id;
+  document.querySelectorAll('.centro-card').forEach(c => c.classList.remove('selected'));
+  document.getElementById(`cc-${id}`)?.classList.add('selected');
+}
+
+async function loadTiposDonacion() {
+  try {
+    tiposCache = await apiFetch('/api/tipos-donacion');
+    document.getElementById('kpi-tipos').textContent = tiposCache.length;
+    const selDon = document.getElementById('don-tipo');
+    selDon.innerHTML = '<option value="">Selecciona el tipo de donación…</option>';
+    tiposCache.forEach(t => { selDon.innerHTML += `<option value="${t.id}">${t.clasificacion}</option>`; });
+
+    const selBen = document.getElementById('sol-tipo');
+    if (selBen) {
+      selBen.innerHTML = '<option value="">Selecciona tipo de artículo…</option>';
+      tiposCache.forEach(t => { selBen.innerHTML += `<option value="${t.id}">${t.clasificacion}</option>`; });
+    }
+  } catch(e) {
+    console.warn('No se pudieron cargar tipos:', e);
+  }
+}
+
+async function loadMisDonaciones() {
+  if (!state.refId) return;
+  const tbody = document.getElementById('tbody-mis-donaciones');
+  try {
+    const list = await apiFetch(`/api/donaciones/donante/${state.refId}`);
+    document.getElementById('kpi-mis-donaciones').textContent = list.length;
+    document.getElementById('kpi-entregadas').textContent = list.filter(d => d.estado === 'ENTREGADA').length;
+
+    if (list.length === 0) {
+      tbody.innerHTML = '<tr><td colspan="5"><div class="empty-state"><div class="empty-icon">📦</div><p>Aún no has realizado donaciones</p></div></td></tr>';
+      return;
+    }
+    tbody.innerHTML = list.map(d => `
+      <tr>
+        <td>${d.articulo}</td>
+        <td>${centroNombre(d.centroAcopioId)}</td>
+        <td>${d.cantidad}</td>
+        <td>${badgeDonacion(d.estado)}</td>
+        <td>${formatDate(d.creadoEn)}</td>
+      </tr>
+    `).join('');
+  } catch(e) {
+    tbody.innerHTML = `<tr><td colspan="5"><div class="alert alert-error">Error al cargar donaciones: ${e.message}</div></td></tr>`;
+  }
+}
+
+function showDonMsg(msg, type = 'error') {
+  const el = document.getElementById('msg-donacion');
+  el.className = `alert alert-${type}`;
+  el.textContent = msg;
+  el.classList.remove('hidden');
+  setTimeout(() => el.classList.add('hidden'), 4000);
+}
+
+async function enviarDonacion() {
+  const tipo     = document.getElementById('don-tipo').value;
+  const articulo = document.getElementById('don-articulo').value.trim();
+  const cantidad = parseInt(document.getElementById('don-cantidad').value);
+  const obs      = document.getElementById('don-obs').value.trim();
+
+  if (!selectedCentro) return showDonMsg('Selecciona un centro de acopio');
+  if (!tipo)           return showDonMsg('Selecciona el tipo de donación');
+  if (!articulo)       return showDonMsg('Describe el artículo a donar');
+  if (!cantidad || cantidad < 1) return showDonMsg('La cantidad debe ser mayor a 0');
+
+  const btn = document.querySelector('#dn-view-donar .btn-lg');
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spinner"></span> Registrando…';
+
+  try {
+    // Obtener un beneficiario del centro para asignar la donación
+    let beneficiarioId = 1; // fallback
+    try {
+      const bens = await apiFetch(`/api/beneficiarios/centro/${selectedCentro}/activos`);
+      if (bens && bens.length > 0) beneficiarioId = bens[0].id;
+    } catch(_) {}
+
+    const tipoNombre = tiposCache.find(t => String(t.id) === String(tipo))?.clasificacion || tipo;
+
+    await apiFetch('/api/donaciones', {
+      method: 'POST',
+      body: JSON.stringify({
+        donanteId:     state.refId,
+        beneficiarioId,
+        centroAcopioId: selectedCentro,
+        articulo:      `[${tipoNombre}] ${articulo}`,
+        cantidad,
+        observaciones: obs || null,
+        estado:        'PENDIENTE'
+      })
+    });
+
+    showDonMsg('¡Donación registrada exitosamente! 🎉', 'success');
+    document.getElementById('don-articulo').value = '';
+    document.getElementById('don-cantidad').value = '1';
+    document.getElementById('don-obs').value = '';
+    document.getElementById('don-tipo').value = '';
+    selectedCentro = null;
+    document.querySelectorAll('.centro-card').forEach(c => c.classList.remove('selected'));
+    loadMisDonaciones();
+
+  } catch(e) {
+    showDonMsg('Error al registrar: ' + e.message);
+  } finally {
+    btn.disabled = false;
+    btn.textContent = 'Registrar donación';
+  }
+}
+
+/* ══════════════════════════
+   PANEL BENEFICIARIO
+══════════════════════════ */
+async function loadPanelBenef() {
+  document.getElementById('bn-email').textContent = state.email || '';
+  loadTiposDonacion();
+  loadInfoBenef();
+  loadDonacionesBenef();
+}
+
+function showBenView(view) {
+  document.querySelectorAll('#page-beneficiario .panel-view').forEach(v => v.classList.remove('active'));
+  document.getElementById(`bn-view-${view}`).classList.add('active');
+  document.querySelectorAll('#page-beneficiario .sidebar-link').forEach(l => l.classList.remove('active'));
+  document.getElementById(`bn-link-${view}`)?.classList.add('active');
+}
+
+async function loadInfoBenef() {
+  const cont = document.getElementById('bn-info-content');
+  try {
+    const b = await apiFetch(`/api/beneficiarios/${state.refId}`);
+    document.getElementById('bn-nombre').textContent = `${b.nombre} ${b.apellido}`;
+    document.getElementById('bn-greeting').textContent = b.nombre;
+    cont.innerHTML = `
+      <div><b>Nombre</b><br>${b.nombre} ${b.apellido}</div>
+      <div><b>RUT</b><br>${b.rut || '–'}</div>
+      <div><b>Teléfono</b><br>${b.telefono || '–'}</div>
+      <div><b>Estado</b><br>${b.activo ? '✅ Activo' : '❌ Inactivo'}</div>
+      <div style="grid-column:1/-1"><b>Necesidad registrada</b><br>${b.necesidad || '–'}</div>
+    `;
+  } catch(e) {
+    cont.innerHTML = `<div class="alert alert-error" style="grid-column:1/-1">Error cargando perfil: ${e.message}</div>`;
+  }
+}
+
+async function loadDonacionesBenef() {
+  if (!state.refId) return;
+  const tbody = document.getElementById('tbody-donaciones-benef');
+  try {
+    const list = await apiFetch(`/api/donaciones/beneficiario/${state.refId}`);
+    document.getElementById('kpi-mis-sol').textContent      = list.length;
+    document.getElementById('kpi-recibidas').textContent    = list.filter(d => d.estado === 'ENTREGADA').length;
+    document.getElementById('kpi-pendientes-ben').textContent = list.filter(d => d.estado === 'PENDIENTE').length;
+
+    if (list.length === 0) {
+      tbody.innerHTML = '<tr><td colspan="5"><div class="empty-state"><div class="empty-icon">📝</div><p>Aún no tienes solicitudes</p></div></td></tr>';
+      return;
+    }
+    tbody.innerHTML = list.map(d => `
+      <tr>
+        <td>${d.articulo}</td>
+        <td>${d.observaciones || '–'}</td>
+        <td>${d.cantidad}</td>
+        <td>${badgeDonacion(d.estado)}</td>
+        <td>${formatDate(d.creadoEn)}</td>
+      </tr>
+    `).join('');
+  } catch(e) {
+    tbody.innerHTML = `<tr><td colspan="5"><div class="alert alert-error">Error: ${e.message}</div></td></tr>`;
+  }
+}
+
+function showSolMsg(msg, type = 'error') {
+  const el = document.getElementById('msg-solicitud');
+  el.className = `alert alert-${type}`;
+  el.textContent = msg;
+  el.classList.remove('hidden');
+  setTimeout(() => el.classList.add('hidden'), 4000);
+}
+
+async function enviarSolicitud() {
+  const tipo     = document.getElementById('sol-tipo').value;
+  const articulo = document.getElementById('sol-articulo').value.trim();
+  const cantidad = parseInt(document.getElementById('sol-cantidad').value);
+  const desc     = document.getElementById('sol-desc').value.trim();
+
+  if (!tipo)    return showSolMsg('Selecciona el tipo de artículo que necesitas');
+  if (!articulo) return showSolMsg('Describe el artículo que necesitas');
+  if (!cantidad || cantidad < 1) return showSolMsg('La cantidad debe ser mayor a 0');
+  if (!desc)    return showSolMsg('Describe tu necesidad');
+
+  const btn = document.querySelector('#bn-view-solicitar .btn-lg');
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spinner"></span> Enviando…';
+
+  try {
+    // Obtener los datos del beneficiario para conocer su centro
+    const b = await apiFetch(`/api/beneficiarios/${state.refId}`);
+    const centroId = b.centroAcopioId;
+
+    const tipoNombre = tiposCache.find(t => String(t.id) === String(tipo))?.clasificacion || tipo;
+
+    // Actualizar la necesidad del beneficiario
+    await apiFetch(`/api/beneficiarios/${state.refId}`, {
+      method: 'PUT',
+      body: JSON.stringify({ ...b, necesidad: `[SOLICITUD] ${tipoNombre}: ${articulo} (x${cantidad}) | ${desc}` })
+    });
+
+    // Registrar la solicitud como donación PENDIENTE asociada al propio beneficiario
+    await apiFetch('/api/donaciones', {
+      method: 'POST',
+      body: JSON.stringify({
+        donanteId:      state.refId,  // donante = propio beneficiario (solicitud)
+        beneficiarioId: state.refId,
+        centroAcopioId: centroId,
+        articulo:       `[SOLICITUD][${tipoNombre}] ${articulo}`,
+        cantidad,
+        observaciones:  desc,
+        estado:         'PENDIENTE'
+      })
+    });
+
+    showSolMsg('¡Solicitud enviada exitosamente! 🎉', 'success');
+    document.getElementById('sol-articulo').value = '';
+    document.getElementById('sol-cantidad').value = '1';
+    document.getElementById('sol-desc').value = '';
+    document.getElementById('sol-tipo').value = '';
+    loadDonacionesBenef();
+
+  } catch(e) {
+    showSolMsg('Error al enviar solicitud: ' + e.message);
+  } finally {
+    btn.disabled = false;
+    btn.textContent = 'Enviar solicitud';
+  }
+}
+
+/* ── Helpers ── */
+function centroNombre(id) {
+  const c = centrosDonCache.find(x => x.id === id);
+  return c ? c.nombre : `Centro #${id}`;
+}
+
+function badgeDonacion(estado) {
+  const map = {
+    'PENDIENTE':   'badge-pendiente',
+    'ENTREGADA':   'badge-entregada',
+    'CANCELADA':   'badge-cancelada',
+    'EN_TRANSITO': 'badge-en_transito',
+  };
+  return `<span class="badge ${map[estado] || ''}">${estado}</span>`;
+}
+
+function formatDate(dt) {
+  if (!dt) return '–';
+  try { return new Date(dt).toLocaleDateString('es-CL', { day:'2-digit', month:'short', year:'numeric' }); }
+  catch(_) { return dt; }
+}
+
+async function loadLandingStats() {
+  try {
+    const [centros, tipos, donantes, donaciones] = await Promise.all([
+      apiFetch('/api/centros/activos').catch(() => []),
+      apiFetch('/api/tipos-donacion').catch(() => []),
+      apiFetch('/api/donantes/activos').catch(() => []),
+      apiFetch('/api/donaciones').catch(() => []),
+    ]);
+
+    document.getElementById('stat-centros').textContent  = centros.length  || '–';
+    document.getElementById('stat-tipos').textContent    = tipos.length    || '–';
+    document.getElementById('stat-donantes').textContent = donantes.length || '–';
+    document.getElementById('stat-donaciones').textContent = donaciones.length || '–';
+
+    // ── Metas por tipo de artículo ──
+    const metasCont = document.getElementById('metas-container');
+    if (tipos.length === 0) {
+      metasCont.innerHTML = '<p style="color:var(--sub);text-align:center">No hay tipos de donación configurados.</p>';
+    } else {
+      const conteo = {};
+      donaciones.forEach(d => {
+        // Extraer tipo del nombre del artículo (formato: [Tipo] artículo)
+        const match = d.articulo && d.articulo.match(/^\[([^\]]+)\]/);
+        const key = match ? match[1] : 'Sin clasificar';
+        conteo[key] = (conteo[key] || 0) + (d.cantidad || 1);
+      });
+      const total = donaciones.length || 1;
+      metasCont.innerHTML = tipos.map(t => {
+        const cant = conteo[t.clasificacion] || 0;
+        const meta = 20; // meta orientativa por tipo
+        const pct  = Math.min(Math.round((cant / meta) * 100), 100);
+        return `
+          <div style="margin-bottom:18px;">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">
+              <span style="font-weight:600;font-size:14px;">${t.clasificacion}</span>
+              <span style="font-size:13px;color:var(--sub)">${cant} / ${meta} unidades</span>
+            </div>
+            <div style="background:var(--gris-bd);border-radius:99px;height:10px;overflow:hidden;">
+              <div style="background:var(--verde);height:10px;border-radius:99px;width:${pct}%;transition:width .6s ease;"></div>
+            </div>
+          </div>`;
+      }).join('');
+    }
+
+    // ── Donaciones recientes (últimas 8) ──
+    const tbody = document.getElementById('tbody-recientes');
+    if (donaciones.length === 0) {
+      tbody.innerHTML = '<tr><td colspan="4" style="padding:24px;text-align:center;color:var(--sub)">Aún no hay donaciones registradas.</td></tr>';
+    } else {
+      const recientes = [...donaciones]
+        .sort((a, b) => new Date(b.creadoEn || 0) - new Date(a.creadoEn || 0))
+        .slice(0, 8);
+      const badgeMap = {
+        'PENDIENTE':'background:#fff8e1;color:#b45309', 'ENTREGADA':'background:#e6f6ef;color:#0a5c35',
+        'CANCELADA':'background:#fdecea;color:#b71c1c', 'EN_TRANSITO':'background:var(--azul-cl);color:var(--azul)'
+      };
+      tbody.innerHTML = recientes.map(d => {
+        const estilo = badgeMap[d.estado] || 'background:var(--gris-bg);color:var(--sub)';
+        return `<tr style="border-top:1px solid var(--gris-bd);">
+          <td style="padding:10px 14px;">${d.articulo || '–'}</td>
+          <td style="padding:10px 14px;">${d.cantidad || 1}</td>
+          <td style="padding:10px 14px;"><span style="padding:3px 10px;border-radius:99px;font-size:12px;font-weight:600;${estilo}">${d.estado || '–'}</span></td>
+          <td style="padding:10px 14px;color:var(--sub);font-size:13px;">${formatDate(d.creadoEn)}</td>
+        </tr>`;
+      }).join('');
+    }
+
+  } catch(e) {
+    console.warn('Error cargando stats:', e);
+  }
+}
+
+/* ── Logo home ── */
+function goHome() {
+  if (state.token) {
+    if      (state.rol === "DONANTE")      showPage("donante");
+    else if (state.rol === "BENEFICIANTE") showPage("beneficiario");
+    else showPage("landing");
+  } else {
+    showPage("landing");
+  }
+}
+
+/* ── Init ── */
+try {
+  updateNavAuth();
+  autoRedirect();
+} catch(e) { console.error('Init error:', e); }
+// Stats se cargan de forma no-bloqueante
+setTimeout(function() {
+  try { loadLandingStats(); } catch(e) { console.error('Stats error:', e); }
+}, 100);
+</script>
+</body>
+</html>

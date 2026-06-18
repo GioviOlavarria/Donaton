@@ -92,74 +92,6 @@ services:
     networks:
       - donaton-network
 
-  ms-centros-acopio:
-    build:
-      context: ./ms-centros-acopio
-      dockerfile: Dockerfile
-    container_name: donaton-ms-centros
-    ports:
-      - "${CENTROS_APP_PORT}:8083"
-    environment:
-      SPRING_DATASOURCE_URL: jdbc:mysql://db-centros:3306/${CENTROS_DB_NAME}?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=America/Santiago
-      SPRING_DATASOURCE_USERNAME: ${CENTROS_DB_USER}
-      SPRING_DATASOURCE_PASSWORD: ${CENTROS_DB_PASSWORD}
-    depends_on:
-      db-centros:
-        condition: service_healthy
-    networks:
-      - donaton-network
-
-  ms-donantes:
-    build:
-      context: ./ms-donantes
-      dockerfile: Dockerfile
-    container_name: donaton-ms-donantes
-    ports:
-      - "${DONANTES_APP_PORT}:8081"
-    environment:
-      SPRING_DATASOURCE_URL: jdbc:mysql://db-donantes:3306/${DONANTES_DB_NAME}?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=America/Santiago
-      SPRING_DATASOURCE_USERNAME: ${DONANTES_DB_USER}
-      SPRING_DATASOURCE_PASSWORD: ${DONANTES_DB_PASSWORD}
-    depends_on:
-      db-donantes:
-        condition: service_healthy
-    networks:
-      - donaton-network
-
-  ms-beneficiarios:
-    build:
-      context: ./ms-beneficiarios
-      dockerfile: Dockerfile
-    container_name: donaton-ms-beneficiarios
-    ports:
-      - "${BENEFICIARIOS_APP_PORT}:8082"
-    environment:
-      SPRING_DATASOURCE_URL: jdbc:mysql://db-beneficiarios:3306/${BENEFICIARIOS_DB_NAME}?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=America/Santiago
-      SPRING_DATASOURCE_USERNAME: ${BENEFICIARIOS_DB_USER}
-      SPRING_DATASOURCE_PASSWORD: ${BENEFICIARIOS_DB_PASSWORD}
-    depends_on:
-      db-beneficiarios:
-        condition: service_healthy
-    networks:
-      - donaton-network
-
-  ms-donaciones:
-    build:
-      context: ./ms-donaciones
-      dockerfile: Dockerfile
-    container_name: donaton-ms-donaciones
-    ports:
-      - "${DONACIONES_APP_PORT}:8084"
-    environment:
-      SPRING_DATASOURCE_URL: jdbc:mysql://db-donaciones:3306/${DONACIONES_DB_NAME}?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=America/Santiago
-      SPRING_DATASOURCE_USERNAME: ${DONACIONES_DB_USER}
-      SPRING_DATASOURCE_PASSWORD: ${DONACIONES_DB_PASSWORD}
-    depends_on:
-      db-donaciones:
-        condition: service_healthy
-    networks:
-      - donaton-network
-
   db-comunas:
     image: mysql:8.0
     container_name: donaton-db-comunas
@@ -229,6 +161,98 @@ services:
     networks:
       - donaton-network
 
+  # FIX: db-necesidad faltaba completamente en el docker-compose original
+  db-necesidad:
+    image: mysql:8.0
+    container_name: donaton-db-necesidad
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE:      ${NECESIDAD_DB_NAME}
+      MYSQL_USER:          ${NECESIDAD_DB_USER}
+      MYSQL_PASSWORD:      ${NECESIDAD_DB_PASSWORD}
+    command: --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
+    ports:
+      - "${NECESIDAD_DB_PORT}:3306"
+    volumes:
+      - necesidad-data:/var/lib/mysql
+      - ./db-init/necesidad:/docker-entrypoint-initdb.d
+    healthcheck:
+      test: ["CMD-SHELL", "mysqladmin ping -h localhost -u root -p${MYSQL_ROOT_PASSWORD} --silent"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+    networks:
+      - donaton-network
+
+  ms-centros-acopio:
+    build:
+      context: ./ms-centros-acopio
+      dockerfile: Dockerfile
+    container_name: donaton-ms-centros
+    ports:
+      - "${CENTROS_APP_PORT}:8083"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://db-centros:3306/${CENTROS_DB_NAME}?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=America/Santiago
+      SPRING_DATASOURCE_USERNAME: ${CENTROS_DB_USER}
+      SPRING_DATASOURCE_PASSWORD: ${CENTROS_DB_PASSWORD}
+    depends_on:
+      db-centros:
+        condition: service_healthy
+    networks:
+      - donaton-network
+
+  ms-donantes:
+    build:
+      context: ./ms-donantes
+      dockerfile: Dockerfile
+    container_name: donaton-ms-donantes
+    ports:
+      - "${DONANTES_APP_PORT}:8081"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://db-donantes:3306/${DONANTES_DB_NAME}?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=America/Santiago
+      SPRING_DATASOURCE_USERNAME: ${DONANTES_DB_USER}
+      SPRING_DATASOURCE_PASSWORD: ${DONANTES_DB_PASSWORD}
+    depends_on:
+      db-donantes:
+        condition: service_healthy
+    networks:
+      - donaton-network
+
+  ms-beneficiarios:
+    build:
+      context: ./ms-beneficiarios
+      dockerfile: Dockerfile
+    container_name: donaton-ms-beneficiarios
+    ports:
+      - "${BENEFICIARIOS_APP_PORT}:8082"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://db-beneficiarios:3306/${BENEFICIARIOS_DB_NAME}?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=America/Santiago
+      SPRING_DATASOURCE_USERNAME: ${BENEFICIARIOS_DB_USER}
+      SPRING_DATASOURCE_PASSWORD: ${BENEFICIARIOS_DB_PASSWORD}
+    depends_on:
+      db-beneficiarios:
+        condition: service_healthy
+    networks:
+      - donaton-network
+
+  ms-donaciones:
+    build:
+      context: ./ms-donaciones
+      dockerfile: Dockerfile
+    container_name: donaton-ms-donaciones
+    ports:
+      - "${DONACIONES_APP_PORT}:8084"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://db-donaciones:3306/${DONACIONES_DB_NAME}?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=America/Santiago
+      SPRING_DATASOURCE_USERNAME: ${DONACIONES_DB_USER}
+      SPRING_DATASOURCE_PASSWORD: ${DONACIONES_DB_PASSWORD}
+    depends_on:
+      db-donaciones:
+        condition: service_healthy
+    networks:
+      - donaton-network
+
   ms-comunas:
     build:
       context: ./ms-comunas
@@ -282,6 +306,43 @@ services:
     networks:
       - donaton-network
 
+  # FIX: ms-necesidad faltaba completamente en el docker-compose original
+  ms-necesidad:
+    build:
+      context: ./ms-necesidad
+      dockerfile: Dockerfile
+    container_name: donaton-ms-necesidad
+    ports:
+      - "${NECESIDAD_APP_PORT}:8089"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://db-necesidad:3306/${NECESIDAD_DB_NAME}?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=America/Santiago
+      SPRING_DATASOURCE_USERNAME: ${NECESIDAD_DB_USER}
+      SPRING_DATASOURCE_PASSWORD: ${NECESIDAD_DB_PASSWORD}
+    depends_on:
+      db-necesidad:
+        condition: service_healthy
+    networks:
+      - donaton-network
+
+  ms-frontend:
+    build:
+      context: ./ms-frontend
+      dockerfile: Dockerfile
+    container_name: donaton-ms-frontend
+    ports:
+      - "${FRONTEND_APP_PORT:-3000}:80"
+    volumes:
+      - ./ms-frontend/index.html:/usr/share/nginx/html/index.html:ro
+      - ./ms-frontend/nginx.conf:/etc/nginx/conf.d/default.conf:ro
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://localhost:80/ || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 5s
+    networks:
+      - donaton-network
+
   ms-admin:
     build:
       context: ./ms-admin
@@ -316,6 +377,7 @@ volumes:
   comunas-data:
   tipos-data:
   auth-data:
+  necesidad-data:
 
 networks:
   donaton-network:
