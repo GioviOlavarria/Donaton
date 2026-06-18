@@ -6,21 +6,20 @@ Proyecto Donaton para Fullstack 3.
     Docker 20.10+
     Docker Compose 2.0+
     Git
-    (Opcional) Java 17+ para desarrollo local
-    (Opcional) Maven 4.0.6 para build local
 
 # Instalacion en Linux
 
     Clonar el repositorio:
 
-git clone <url-repositorio>
+git clone <(https://github.com/GioviOlavarria/Donaton.git)>
+
 cd Donaton
 
 # Instalacion en Windows
 
     Clonar el repositorio:
 
-git clone <url-repositorio>
+git clone <(https://github.com/GioviOlavarria/Donaton.git)>
 cd Donaton
 
 
